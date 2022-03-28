@@ -161,3 +161,125 @@ func TestLastIndexOfString(t *testing.T) {
 		}
 	}
 }
+
+func TestFindInt(t *testing.T) {
+	cases := []struct {
+		name        string
+		input       []int
+		pred        func(elem int) bool
+		expected    int
+		expectedErr bool
+	}{
+		{
+			"happyCase",
+			[]int{1, 2, 3},
+			func(elem int) bool {
+				return elem == 2
+			},
+			2,
+			false,
+		},
+		{
+			"expandedCase",
+			[]int{1, 4, 3, 23, 412, 19, 49, 67, 76, 15, 23, 18},
+			func(elem int) bool {
+				return elem == 412
+			},
+			412,
+			false,
+		},
+		{
+			"doesNotExist",
+			[]int{1, 4, 3},
+			func(elem int) bool {
+				return elem == 412
+			},
+			412,
+			true,
+		},
+		{
+			"emptyList",
+			[]int{},
+			func(elem int) bool {
+				return elem == 412
+			},
+			412,
+			true,
+		},
+	}
+	for _, tc := range cases {
+		actual, err := Find(tc.input, tc.pred)
+		if tc.expectedErr && err == nil {
+			t.Errorf("TestFindInt %v: expected an error and got nil", tc.name)
+		}
+
+		if !tc.expectedErr && err != nil {
+			t.Errorf("TestFindInt %v: did not expect error but got %v", tc.name, err)
+		}
+
+		if !tc.expectedErr && actual != tc.expected {
+			t.Errorf("TestFindInt %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+	}
+}
+
+func TestFindString(t *testing.T) {
+	cases := []struct {
+		name        string
+		input       []string
+		pred        func(elem string) bool
+		expected    string
+		expectedErr bool
+	}{
+		{
+			"happyCase",
+			[]string{"abc", "def", "hijk"},
+			func(elem string) bool {
+				return elem == "def"
+			},
+			"def",
+			false,
+		},
+		{
+			"expandedCase",
+			[]string{"abc", "def", "hijk", "lmnop", "qrs", "tuv", "wxy", "z"},
+			func(elem string) bool {
+				return elem == "hijk"
+			},
+			"hijk",
+			false,
+		},
+		{
+			"doesNotExist",
+			[]string{"abc", "def", "hijk"},
+			func(elem string) bool {
+				return elem == "lmnop"
+			},
+			"lmnop",
+			true,
+		},
+		{
+			"emptyList",
+			[]string{},
+			func(elem string) bool {
+				return elem == "def"
+			},
+			"def",
+			true,
+		},
+	}
+	for _, tc := range cases {
+		actual, err := Find(tc.input, tc.pred)
+		if tc.expectedErr && err == nil {
+			t.Errorf("TestFindString %v: expected an error and got nil", tc.name)
+		}
+
+		if !tc.expectedErr && err != nil {
+			t.Errorf("TestFindString %v: did not expect error but got %v", tc.name, err)
+		}
+
+		if !tc.expectedErr && actual != tc.expected {
+			t.Errorf("TestFindString %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+	}
+}
