@@ -298,12 +298,6 @@ func TestMinInt(t *testing.T) {
 			false,
 		},
 		{
-			"doesNotExist",
-			[]int{14, 8, 9, 12},
-			7,
-			true,
-		},
-		{
 			"emptySlice",
 			[]int{},
 			8,

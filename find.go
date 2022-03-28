@@ -61,6 +61,7 @@ func Min[T constraints.Ordered](list []T) (T, error) {
 		if min > list[i] {
 			min = list[i]
 		}
+		i++
 	}
 	return min, nil
 }
@@ -81,6 +82,7 @@ func Max[T constraints.Ordered](list []T) (T, error) {
 		if max < list[i] {
 			max = list[i]
 		}
+		i++
 	}
 	return max, nil
 }
