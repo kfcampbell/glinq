@@ -198,7 +198,7 @@ func TestFindInt(t *testing.T) {
 			true,
 		},
 		{
-			"emptyList",
+			"emptySlice",
 			[]int{},
 			func(elem int) bool {
 				return elem == 412
@@ -259,7 +259,7 @@ func TestFindString(t *testing.T) {
 			true,
 		},
 		{
-			"emptyList",
+			"emptySlice",
 			[]string{},
 			func(elem string) bool {
 				return elem == "def"
@@ -280,6 +280,48 @@ func TestFindString(t *testing.T) {
 
 		if !tc.expectedErr && actual != tc.expected {
 			t.Errorf("TestFindString %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+	}
+}
+
+func TestMinInt(t *testing.T) {
+	cases := []struct {
+		name        string
+		input       []int
+		expected    int
+		expectedErr bool
+	}{
+		{
+			"happyCase",
+			[]int{14, 8, 9, 12},
+			8,
+			false,
+		},
+		{
+			"doesNotExist",
+			[]int{14, 8, 9, 12},
+			7,
+			true,
+		},
+		{
+			"emptySlice",
+			[]int{},
+			8,
+			true,
+		},
+	}
+	for _, tc := range cases {
+		actual, err := Min(tc.input)
+		if tc.expectedErr && err == nil {
+			t.Errorf("TestMinInt %v: expected an error and got nil", tc.name)
+		}
+
+		if !tc.expectedErr && err != nil {
+			t.Errorf("TestMinInt %v: did not expect error but got %v", tc.name, err)
+		}
+
+		if !tc.expectedErr && actual != tc.expected {
+			t.Errorf("TestMinInt %v: expected %v, got %v", tc.name, tc.expected, actual)
 		}
 	}
 }
