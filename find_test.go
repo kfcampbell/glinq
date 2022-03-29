@@ -4,6 +4,17 @@ import (
 	"testing"
 )
 
+func sliceToChan[T any](list []T) <-chan T {
+	ch := make(chan T)
+	go func() {
+		for _, v := range list {
+			ch <- v
+		}
+		close(ch)
+	}()
+	return ch
+}
+
 func TestIndexOfInt(t *testing.T) {
 	cases := []struct {
 		name     string
@@ -44,9 +55,15 @@ func TestIndexOfInt(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := IndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actual)
+		actIndexOf := IndexOf(tc.input, tc.elem)
+		if actIndexOf != tc.expected {
+			t.Errorf("TestIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actIndexOfCh := IndexOfCh(ch, tc.elem)
+		if actIndexOfCh != tc.expected {
+			t.Errorf("TestIndexOfInt IndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actIndexOfCh)
 		}
 	}
 }
@@ -73,9 +90,15 @@ func TestIndexOfString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := IndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestIndexOfString %v: expected %v, got %v", tc.name, tc.elem, actual)
+		actIndexOf := IndexOf(tc.input, tc.elem)
+		if actIndexOf != tc.expected {
+			t.Errorf("TestIndexOfString %v: expected %v, got %v", tc.name, tc.elem, actIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actIndexOfCh := IndexOfCh(ch, tc.elem)
+		if actIndexOfCh != tc.expected {
+			t.Errorf("TestIndexOfString IndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actIndexOfCh)
 		}
 	}
 }
@@ -114,9 +137,15 @@ func TestLastIndexOfInt(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := LastIndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestLastIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actual)
+		actLastIndexOf := LastIndexOf(tc.input, tc.elem)
+		if actLastIndexOf != tc.expected {
+			t.Errorf("TestLastIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actLastIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actLastIndexOfCh := LastIndexOfCh(ch, tc.elem)
+		if actLastIndexOfCh != tc.expected {
+			t.Errorf("TestLastIndexOfInt LastIndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actLastIndexOfCh)
 		}
 	}
 }
@@ -155,20 +184,25 @@ func TestLastIndexOfString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := LastIndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestLastIndexOfString %v: expected %v, got %v", tc.name, tc.expected, actual)
+		actLastIndexOf := LastIndexOf(tc.input, tc.elem)
+		if actLastIndexOf != tc.expected {
+			t.Errorf("TestLastIndexOfString %v: expected %v, got %v", tc.name, tc.expected, actLastIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actLastIndexOfCh := LastIndexOfCh(ch, tc.elem)
+		if actLastIndexOfCh != tc.expected {
+			t.Errorf("TestLastIndexOfString LastIndexOfCh %v: expected %v, got %v", tc.name, tc.expected, actLastIndexOfCh)
 		}
 	}
 }
 
 func TestFindInt(t *testing.T) {
 	cases := []struct {
-		name        string
-		input       []int
-		pred        func(elem int) bool
-		expected    int
-		expectedErr bool
+		name     string
+		input    []int
+		pred     func(elem int) bool
+		expected int
 	}{
 		{
 			"happyCase",
@@ -177,7 +211,6 @@ func TestFindInt(t *testing.T) {
 				return elem == 2
 			},
 			2,
-			false,
 		},
 		{
 			"expandedCase",
@@ -186,16 +219,35 @@ func TestFindInt(t *testing.T) {
 				return elem == 412
 			},
 			412,
-			false,
 		},
+	}
+	for _, tc := range cases {
+		actFind, err := Find(tc.input, tc.pred)
+
+		if err != nil || actFind != tc.expected {
+			t.Errorf("TestFindInt %v: expected %v, got %v, err %v", tc.name, tc.expected, actFind, err)
+		}
+
+		ch := sliceToChan(tc.input)
+		actFindCh, err := FindCh(ch, tc.pred)
+		if err != nil || actFindCh != tc.expected {
+			t.Errorf("TestFindInt FindCh %v: expected %v, got %v, err %v", tc.name, tc.expected, actFindCh, err)
+		}
+	}
+}
+
+func TestFindIntErr(t *testing.T) {
+	cases := []struct {
+		name  string
+		input []int
+		pred  func(elem int) bool
+	}{
 		{
 			"doesNotExist",
 			[]int{1, 4, 3},
 			func(elem int) bool {
 				return elem == 412
 			},
-			412,
-			true,
 		},
 		{
 			"emptySlice",
@@ -203,33 +255,28 @@ func TestFindInt(t *testing.T) {
 			func(elem int) bool {
 				return elem == 412
 			},
-			412,
-			true,
 		},
 	}
+
 	for _, tc := range cases {
-		actual, err := Find(tc.input, tc.pred)
-		if tc.expectedErr && err == nil {
-			t.Errorf("TestFindInt %v: expected an error and got nil", tc.name)
+		actFind, err := Find(tc.input, tc.pred)
+		if err == nil {
+			t.Errorf("TestFindIntErr %v: wanted err but got nil, found :%v", tc.name, actFind)
 		}
-
-		if !tc.expectedErr && err != nil {
-			t.Errorf("TestFindInt %v: did not expect error but got %v", tc.name, err)
-		}
-
-		if !tc.expectedErr && actual != tc.expected {
-			t.Errorf("TestFindInt %v: expected %v, got %v", tc.name, tc.expected, actual)
+		ch := sliceToChan(tc.input)
+		actFindCh, err := FindCh(ch, tc.pred)
+		if err == nil {
+			t.Errorf("TestFindIntErr FindCh %v: wanted err but got nil, found :%v", tc.name, actFindCh)
 		}
 	}
 }
 
 func TestFindString(t *testing.T) {
 	cases := []struct {
-		name        string
-		input       []string
-		pred        func(elem string) bool
-		expected    string
-		expectedErr bool
+		name     string
+		input    []string
+		pred     func(elem string) bool
+		expected string
 	}{
 		{
 			"happyCase",
@@ -238,7 +285,6 @@ func TestFindString(t *testing.T) {
 				return elem == "def"
 			},
 			"def",
-			false,
 		},
 		{
 			"expandedCase",
@@ -247,75 +293,111 @@ func TestFindString(t *testing.T) {
 				return elem == "hijk"
 			},
 			"hijk",
-			false,
-		},
-		{
-			"doesNotExist",
-			[]string{"abc", "def", "hijk"},
-			func(elem string) bool {
-				return elem == "lmnop"
-			},
-			"lmnop",
-			true,
-		},
-		{
-			"emptySlice",
-			[]string{},
-			func(elem string) bool {
-				return elem == "def"
-			},
-			"def",
-			true,
 		},
 	}
 	for _, tc := range cases {
-		actual, err := Find(tc.input, tc.pred)
-		if tc.expectedErr && err == nil {
-			t.Errorf("TestFindString %v: expected an error and got nil", tc.name)
+		actFind, err := Find(tc.input, tc.pred)
+		if err != nil || actFind != tc.expected {
+			t.Errorf("TestFindString %v: expected %v, got %v, err %v", tc.name, tc.expected, actFind, err)
 		}
-
-		if !tc.expectedErr && err != nil {
-			t.Errorf("TestFindString %v: did not expect error but got %v", tc.name, err)
-		}
-
-		if !tc.expectedErr && actual != tc.expected {
-			t.Errorf("TestFindString %v: expected %v, got %v", tc.name, tc.expected, actual)
+		ch := sliceToChan(tc.input)
+		actFindCh, err := FindCh(ch, tc.pred)
+		if err != nil || actFindCh != tc.expected {
+			t.Errorf("TestFindString FindCh %v: expected %v, got %v, err %v", tc.name, tc.expected, actFindCh, err)
 		}
 	}
 }
 
 func TestMinInt(t *testing.T) {
 	cases := []struct {
-		name        string
-		input       []int
-		expected    int
-		expectedErr bool
+		name     string
+		input    []int
+		expected int
 	}{
 		{
 			"happyCase",
 			[]int{14, 8, 9, 12},
 			8,
-			false,
 		},
 		{
-			"emptySlice",
-			[]int{},
-			8,
-			true,
+			"negatives",
+			[]int{-13, -11, -98, 45, 0, 199, -2},
+			-98,
 		},
 	}
 	for _, tc := range cases {
-		actual, err := Min(tc.input)
-		if tc.expectedErr && err == nil {
-			t.Errorf("TestMinInt %v: expected an error and got nil", tc.name)
+		actMin, err := Min(tc.input)
+
+		if actMin != tc.expected || err != nil {
+			t.Errorf("TestMinInt %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMin, err)
 		}
 
-		if !tc.expectedErr && err != nil {
-			t.Errorf("TestMinInt %v: did not expect error but got %v", tc.name, err)
+		ch := sliceToChan(tc.input)
+		actMinCh, err := MinCh(ch)
+		if actMinCh != tc.expected || err != nil {
+			t.Errorf("TestMinInt MinCh %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMinCh, err)
+		}
+	}
+}
+
+func TestMinError(t *testing.T) {
+	list := make([]int, 0)
+
+	min, err := Min(list)
+	if err == nil {
+		t.Errorf("TestMinError: expected err, got nil and %v min", min)
+	}
+
+	ch := sliceToChan(list)
+	minCh, err := MinCh(ch)
+	if err == nil {
+		t.Errorf("TestMinError MinCh: expected err, got nil and %v min", minCh)
+	}
+}
+
+func TestMaxInt(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected int
+	}{
+		{
+			"happyCase",
+			[]int{14, 8, 9, 12},
+			14,
+		},
+		{
+			"negatives",
+			[]int{-13, -11, -98, 45, 0, 199, -2},
+			199,
+		},
+	}
+	for _, tc := range cases {
+		actMax, err := Max(tc.input)
+
+		if actMax != tc.expected || err != nil {
+			t.Errorf("TestMaxInt %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMax, err)
 		}
 
-		if !tc.expectedErr && actual != tc.expected {
-			t.Errorf("TestMinInt %v: expected %v, got %v", tc.name, tc.expected, actual)
+		ch := sliceToChan(tc.input)
+		actMaxCh, err := MaxCh(ch)
+		if actMaxCh != tc.expected || err != nil {
+			t.Errorf("TestMaxInt MaxCh %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMaxCh, err)
 		}
+	}
+}
+
+func TestMaxError(t *testing.T) {
+	list := make([]int, 0)
+
+	max, err := Max(list)
+	if err == nil {
+		t.Errorf("TestMaxError: expected err, got nil and %v max", max)
+	}
+
+	ch := sliceToChan(list)
+	maxCh, err := MaxCh(ch)
+	if err == nil {
+		t.Errorf("TestMaxError MaxCh: expected err, got nil and %v max", maxCh)
 	}
 }

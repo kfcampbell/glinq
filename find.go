@@ -17,6 +17,20 @@ func IndexOf[T comparable](list []T, elem T) int {
 	return -1
 }
 
+func IndexOfCh[T comparable](ch <-chan T, elem T) int {
+	i := 0
+	for {
+		v, ok := <-ch
+		if !ok {
+			return -1
+		}
+		if v == elem {
+			return i
+		}
+		i++
+	}
+}
+
 // LastIndexOf returns the index of the last instance of the given element in
 // the given slice. If the given element is not present, -1 is returned.
 func LastIndexOf[T comparable](list []T, elem T) int {
@@ -30,18 +44,42 @@ func LastIndexOf[T comparable](list []T, elem T) int {
 	return -1
 }
 
+func LastIndexOfCh[T comparable](ch <-chan T, elem T) int {
+	i := 0
+	lastIndex := -1
+	for {
+		v, ok := <-ch
+		if !ok {
+			return lastIndex
+		}
+		if v == elem {
+			lastIndex = i
+		}
+		i++
+	}
+}
+
 // Find returns the element present and an error if the item is not present
 func Find[T comparable](list []T, is func(a T) bool) (T, error) {
-	var empty T
-	if len(list) == 0 {
-		return empty, fmt.Errorf("cannot find item in empty list")
-	}
 	for _, elem := range list {
 		if is(elem) {
 			return elem, nil
 		}
 	}
+	var empty T
 	return empty, fmt.Errorf("could not find item in list")
+}
+
+func FindCh[T comparable](ch <-chan T, is func(a T) bool) (T, error) {
+	for {
+		elem, ok := <-ch
+		if !ok {
+			return elem, fmt.Errorf("cannot find item in empty chan")
+		}
+		if is(elem) {
+			return elem, nil
+		}
+	}
 }
 
 // Min returns the first instance of the minimum element
@@ -66,6 +104,31 @@ func Min[T constraints.Ordered](list []T) (T, error) {
 	return min, nil
 }
 
+// MinCh returns the first instance of the minimum element
+// received from the given channel.
+func MinCh[T constraints.Ordered](ch <-chan T) (T, error) {
+	init := false
+	var min T
+	for {
+		v, ok := <-ch
+		if !ok {
+			break
+		}
+		if !init {
+			min = v
+			init = true
+		}
+		if min > v {
+			min = v
+		}
+	}
+
+	if !init {
+		return min, fmt.Errorf("cannot find minimum value of empty chan")
+	}
+	return min, nil
+}
+
 // Max returns the first instance of the maximum element
 // present in the given slice.
 func Max[T constraints.Ordered](list []T) (T, error) {
@@ -83,6 +146,28 @@ func Max[T constraints.Ordered](list []T) (T, error) {
 			max = list[i]
 		}
 		i++
+	}
+	return max, nil
+}
+
+func MaxCh[T constraints.Ordered](ch <-chan T) (T, error) {
+	init := false
+	var max T
+	for {
+		v, ok := <-ch
+		if !ok {
+			break
+		}
+		if !init {
+			max = v
+			init = true
+		}
+		if max < v {
+			max = v
+		}
+	}
+	if !init {
+		return max, fmt.Errorf("cannot find maximum value of empty chan")
 	}
 	return max, nil
 }
