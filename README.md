@@ -10,11 +10,74 @@ Long-term TODOs:
 - Cancellation (esp. in channel operations)
 
 
-LINQ vs. Lodash API naming/scheme?
-	- try to match [API scheme here](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0)
-	- select
-		- selectMany
-	- where
-	- aggregate
+LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0)?
+- [x] Aggregate
+- [x] All
+- [x] Any
+- [x] Append
+    - won't implement
+- [x] AsEnumerable
+    - won't implement
+- [x] Average
+- [x] Cast
+    - won't implement
+- [x] Chunk
+- [x] Concat
+    - won't implement
+- [x] Contains
+- [ ] Count
+- [ ] DefaultIfEmpty
+- [ ] Distinct
+- [ ] DistinctBy
+- [ ] ElementAt
+- [ ] ElementAtOrDefault
+- [ ] Empty
+- [ ] Except
+- [ ] ExceptBy
+- [ ] First
+- [ ] FirstOrDefault
+- [ ] GroupBy
+- [ ] GroupJoin
+- [ ] Intersect
+- [ ] IntersectBy
+- [ ] Join
+- [ ] Last
+- [ ] LastOrDefault
+- [ ] LongCount
+- [x] Max
+- [ ] MaxBy
+- [x] Min
+- [ ] MinBy
+- [ ] OfType
+- [ ] OrderBy
+- [ ] OrderByDescending
+- [ ] Prepend
+- [ ] Range
+- [ ] Repeat
+- [ ] Reverse
+- [x] Select
+- [ ] SelectMany
+- [ ] SequenceEqual
+- [ ] Single
+- [ ] SingleOrDefault
+- [ ] Skip
+- [ ] SkipLast
+- [ ] SkipWhile
+- [ ] Sum
+- [ ] Take
+- [ ] TakeLast
+- [ ] TakeWhile
+- [ ] ThenBy
+- [ ] ThenByDescending
+- [ ] ToArray
+- [ ] ToDictionary
+- [ ] ToHashSet
+- [ ] ToList
+- [ ] ToLookup
+- [ ] TryGetNonEnumeratedCount
+- [ ] Union
+- [ ] UnionBy
+- [x] Where
+- [ ] Zip
 
 Is there a way to add these methods onto generic slices/chans? Probably not, but if possible, should we?
