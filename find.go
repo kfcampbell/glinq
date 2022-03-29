@@ -149,3 +149,25 @@ func Max[T constraints.Ordered](list []T) (T, error) {
 	}
 	return max, nil
 }
+
+func MaxCh[T constraints.Ordered](ch <-chan T) (T, error) {
+	init := false
+	var max T
+	for {
+		v, ok := <-ch
+		if !ok {
+			break
+		}
+		if !init {
+			max = v
+			init = true
+		}
+		if max < v {
+			max = v
+		}
+	}
+	if !init {
+		return max, fmt.Errorf("cannot find maximum value of empty chan")
+	}
+	return max, nil
+}
