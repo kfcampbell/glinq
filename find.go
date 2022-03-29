@@ -17,6 +17,20 @@ func IndexOf[T comparable](list []T, elem T) int {
 	return -1
 }
 
+func IndexOfCh[T comparable](ch <-chan T, elem T) int {
+	i := 0
+	for {
+		v, ok := <-ch
+		if !ok {
+			return -1
+		}
+		if v == elem {
+			return i
+		}
+		i++
+	}
+}
+
 // LastIndexOf returns the index of the last instance of the given element in
 // the given slice. If the given element is not present, -1 is returned.
 func LastIndexOf[T comparable](list []T, elem T) int {

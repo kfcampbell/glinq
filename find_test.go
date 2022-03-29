@@ -4,7 +4,18 @@ import (
 	"testing"
 )
 
-func TestIndexOfInt(t *testing.T) {
+func sliceToChan[T any](list []T) <-chan T {
+	ch := make(chan T)
+	go func() {
+		for _, v := range list {
+			ch <- v
+		}
+		close(ch)
+	}()
+	return ch
+}
+
+func TestIndexOfIndexOfChInt(t *testing.T) {
 	cases := []struct {
 		name     string
 		input    []int
@@ -44,9 +55,15 @@ func TestIndexOfInt(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := IndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actual)
+		actIndexOf := IndexOf(tc.input, tc.elem)
+		if actIndexOf != tc.expected {
+			t.Errorf("TestIndexOfIndexOfChInt IndexOf %v: expected %v, got %v", tc.name, tc.elem, actIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actIndexOfCh := IndexOfCh(ch, tc.elem)
+		if actIndexOfCh != tc.expected {
+			t.Errorf("TestIndexOfIndexOfChInt IndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actIndexOfCh)
 		}
 	}
 }
