@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"testing"
 )
 
@@ -318,4 +319,57 @@ func TestMinInt(t *testing.T) {
 			t.Errorf("TestMinInt %v: expected %v, got %v", tc.name, tc.expected, actual)
 		}
 	}
+}
+
+type testStruct struct {
+	name  string
+	input []int
+	elem  int
+}
+
+// to think about when fuzzing: what are the properties we want to verify, since we can't predict the output?
+func FuzzIndexOf(f *testing.F) {
+	cases := []struct {
+		name  string
+		input []int
+		elem  int
+	}{
+		{
+			"happyCase",
+			[]int{14, 8, 9, 12},
+			8,
+		},
+		{
+			"expandedCase",
+			[]int{8, 19, 22, 42, 3, 2},
+			42,
+		},
+	}
+	for _, tc := range cases {
+		// this is super dirty. i don't like it at all.
+		bytes, err := json.Marshal(tc)
+		if err != nil {
+			f.Errorf("FuzzIndexOf json marshal error: %v", err)
+		}
+		f.Add(bytes)
+	}
+	f.Fuzz(func(t *testing.T, orig []byte) {
+		if !json.Valid(orig) {
+			t.Skip("invalid JSON")
+		}
+
+		var v testStruct
+		err := json.Unmarshal(orig, &v)
+		if err != nil {
+			t.Skip("invalid JSON")
+			t.Errorf("FuzzIndexOf json unmarshal error: %v", err)
+		}
+		actual := IndexOf(v.input, v.elem)
+
+		// what do we care about in IndexOf?
+		// i don't think this is actually useful. perhaps fuzzing isn't a good choice for this method.
+		if actual < -1 {
+			t.Errorf("FuzzIndexOf: %v, received actual value < -1. val: %v", v.name, actual)
+		}
+	})
 }
