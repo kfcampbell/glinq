@@ -44,6 +44,21 @@ func LastIndexOf[T comparable](list []T, elem T) int {
 	return -1
 }
 
+func LastIndexOfCh[T comparable](ch <-chan T, elem T) int {
+	i := 0
+	lastIndex := -1
+	for {
+		v, ok := <-ch
+		if !ok {
+			return lastIndex
+		}
+		if v == elem {
+			lastIndex = i
+		}
+		i++
+	}
+}
+
 // Find returns the element present and an error if the item is not present
 func Find[T comparable](list []T, is func(a T) bool) (T, error) {
 	var empty T

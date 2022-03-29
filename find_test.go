@@ -15,7 +15,7 @@ func sliceToChan[T any](list []T) <-chan T {
 	return ch
 }
 
-func TestIndexOfIndexOfChInt(t *testing.T) {
+func TestIndexOfInt(t *testing.T) {
 	cases := []struct {
 		name     string
 		input    []int
@@ -57,13 +57,13 @@ func TestIndexOfIndexOfChInt(t *testing.T) {
 	for _, tc := range cases {
 		actIndexOf := IndexOf(tc.input, tc.elem)
 		if actIndexOf != tc.expected {
-			t.Errorf("TestIndexOfIndexOfChInt IndexOf %v: expected %v, got %v", tc.name, tc.elem, actIndexOf)
+			t.Errorf("TestIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actIndexOf)
 		}
 
 		ch := sliceToChan(tc.input)
 		actIndexOfCh := IndexOfCh(ch, tc.elem)
 		if actIndexOfCh != tc.expected {
-			t.Errorf("TestIndexOfIndexOfChInt IndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actIndexOfCh)
+			t.Errorf("TestIndexOfInt IndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actIndexOfCh)
 		}
 	}
 }
@@ -90,9 +90,15 @@ func TestIndexOfString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := IndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestIndexOfString %v: expected %v, got %v", tc.name, tc.elem, actual)
+		actIndexOf := IndexOf(tc.input, tc.elem)
+		if actIndexOf != tc.expected {
+			t.Errorf("TestIndexOfString %v: expected %v, got %v", tc.name, tc.elem, actIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actIndexOfCh := IndexOfCh(ch, tc.elem)
+		if actIndexOfCh != tc.expected {
+			t.Errorf("TestIndexOfString IndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actIndexOfCh)
 		}
 	}
 }
@@ -131,9 +137,15 @@ func TestLastIndexOfInt(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := LastIndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestLastIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actual)
+		actLastIndexOf := LastIndexOf(tc.input, tc.elem)
+		if actLastIndexOf != tc.expected {
+			t.Errorf("TestLastIndexOfInt %v: expected %v, got %v", tc.name, tc.elem, actLastIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actLastIndexOfCh := LastIndexOfCh(ch, tc.elem)
+		if actLastIndexOfCh != tc.expected {
+			t.Errorf("TestLastIndexOfInt LastIndexOfCh %v: expected %v, got %v", tc.name, tc.elem, actLastIndexOfCh)
 		}
 	}
 }
@@ -172,9 +184,15 @@ func TestLastIndexOfString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := LastIndexOf(tc.input, tc.elem)
-		if actual != tc.expected {
-			t.Errorf("TestLastIndexOfString %v: expected %v, got %v", tc.name, tc.expected, actual)
+		actLastIndexOf := LastIndexOf(tc.input, tc.elem)
+		if actLastIndexOf != tc.expected {
+			t.Errorf("TestLastIndexOfString %v: expected %v, got %v", tc.name, tc.expected, actLastIndexOf)
+		}
+
+		ch := sliceToChan(tc.input)
+		actLastIndexOfCh := LastIndexOfCh(ch, tc.elem)
+		if actLastIndexOfCh != tc.expected {
+			t.Errorf("TestLastIndexOfString LastIndexOfCh %v: expected %v, got %v", tc.name, tc.expected, actLastIndexOfCh)
 		}
 	}
 }
