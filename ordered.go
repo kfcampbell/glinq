@@ -8,20 +8,20 @@ import (
 
 // Min returns the first instance of the minimum element
 // present in the given slice.
-func Min[T constraints.Ordered](list []T) (T, error) {
+func Min[T constraints.Ordered](input []T) (T, error) {
 	var min T
-	if len(list) == 0 {
-		return min, fmt.Errorf("cannot find minimum value of empty list")
+	if len(input) == 0 {
+		return min, fmt.Errorf("cannot find minimum value of empty input")
 	}
-	if len(list) == 1 {
-		return list[0], nil
+	if len(input) == 1 {
+		return input[0], nil
 	}
 
 	i := 1
-	min = list[0]
-	for i < len(list) {
-		if min > list[i] {
-			min = list[i]
+	min = input[0]
+	for i < len(input) {
+		if min > input[i] {
+			min = input[i]
 		}
 		i++
 	}
@@ -52,19 +52,19 @@ func MinCh[T constraints.Ordered](ch <-chan T) (T, error) {
 
 // Max returns the first instance of the maximum element
 // present in the given slice.
-func Max[T constraints.Ordered](list []T) (T, error) {
+func Max[T constraints.Ordered](input []T) (T, error) {
 	var max T
-	if len(list) == 0 {
-		return max, fmt.Errorf("cannot find maximum value of empty list")
+	if len(input) == 0 {
+		return max, fmt.Errorf("cannot find maximum value of empty input")
 	}
-	if len(list) == 1 {
-		return list[1], nil
+	if len(input) == 1 {
+		return input[1], nil
 	}
 	i := 1
-	max = list[0]
-	for i < len(list) {
-		if max < list[i] {
-			max = list[i]
+	max = input[0]
+	for i < len(input) {
+		if max < input[i] {
+			max = input[i]
 		}
 		i++
 	}

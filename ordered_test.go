@@ -4,10 +4,10 @@ import (
 	"testing"
 )
 
-func sliceToChan[T any](list []T) <-chan T {
+func sliceToChan[T any](input []T) <-chan T {
 	ch := make(chan T)
 	go func() {
-		for _, v := range list {
+		for _, v := range input {
 			ch <- v
 		}
 		close(ch)
@@ -48,14 +48,14 @@ func TestMinInt(t *testing.T) {
 }
 
 func TestMinError(t *testing.T) {
-	list := make([]int, 0)
+	input := make([]int, 0)
 
-	min, err := Min(list)
+	min, err := Min(input)
 	if err == nil {
 		t.Errorf("TestMinError: expected err, got nil and %v min", min)
 	}
 
-	ch := sliceToChan(list)
+	ch := sliceToChan(input)
 	minCh, err := MinCh(ch)
 	if err == nil {
 		t.Errorf("TestMinError MinCh: expected err, got nil and %v min", minCh)
@@ -95,14 +95,14 @@ func TestMaxInt(t *testing.T) {
 }
 
 func TestMaxError(t *testing.T) {
-	list := make([]int, 0)
+	input := make([]int, 0)
 
-	max, err := Max(list)
+	max, err := Max(input)
 	if err == nil {
 		t.Errorf("TestMaxError: expected err, got nil and %v max", max)
 	}
 
-	ch := sliceToChan(list)
+	ch := sliceToChan(input)
 	maxCh, err := MaxCh(ch)
 	if err == nil {
 		t.Errorf("TestMaxError MaxCh: expected err, got nil and %v max", maxCh)
