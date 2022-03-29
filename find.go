@@ -51,9 +51,9 @@ func LastIndexOfCh[T comparable](ch <-chan T, elem T) int {
 }
 
 // Find returns the element present and an error if the item is not present
-func Find[T any](input []T, is func(a T) bool) (T, error) {
+func Find[T any](input []T, pred func(a T) bool) (T, error) {
 	for _, elem := range input {
-		if is(elem) {
+		if pred(elem) {
 			return elem, nil
 		}
 	}
@@ -61,9 +61,9 @@ func Find[T any](input []T, is func(a T) bool) (T, error) {
 	return empty, fmt.Errorf("could not find item in input")
 }
 
-func FindCh[T any](ch <-chan T, is func(a T) bool) (T, error) {
-	for v := range ch {
-		if is(v) {
+func FindCh[T any](input <-chan T, pred func(a T) bool) (T, error) {
+	for v := range input {
+		if pred(v) {
 			return v, nil
 		}
 	}
@@ -71,4 +71,16 @@ func FindCh[T any](ch <-chan T, is func(a T) bool) (T, error) {
 	return empty, fmt.Errorf("cannot find item in empty chan")
 }
 
-//func Contains[T any](input [])
+// Contains takes in a slice and a predicate, and returns true if the predicate
+// matches any element in the slice.
+func Contains[T any](input []T, pred func(a T) bool) bool {
+	_, err := Find(input, pred)
+	return err == nil
+}
+
+// ContainsCh takes in a channel and a predicate, and returns true if the
+// predicate matches any element sent down the channel.
+func ContainsCh[T any](input <-chan T, pred func(a T) bool) bool {
+	_, err := FindCh(input, pred)
+	return err == nil
+}

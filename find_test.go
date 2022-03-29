@@ -294,3 +294,50 @@ func TestFindString(t *testing.T) {
 		}
 	}
 }
+
+func TestContains(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		pred     func(elem int) bool
+		expected bool
+	}{
+		{
+			"happyCase",
+			[]int{1, 2, 3},
+			func(elem int) bool {
+				return elem == 2
+			},
+			true,
+		},
+		{
+			"expandedCase",
+			[]int{1, 4, 3, 23, 412, 19, 49, 67, 76, 15, 23, 18},
+			func(elem int) bool {
+				return elem == 412
+			},
+			true,
+		},
+		{
+			"missingData",
+			[]int{1, 2, 3},
+			func(elem int) bool {
+				return elem == 4
+			},
+			false,
+		},
+	}
+	for _, tc := range cases {
+		actContains := Contains(tc.input, tc.pred)
+
+		if actContains != tc.expected {
+			t.Errorf("TestContains %v: expected %v, got %v", tc.name, tc.expected, actContains)
+		}
+
+		ch := sliceToChan(tc.input)
+		actContainsCh := ContainsCh(ch, tc.pred)
+		if actContainsCh != tc.expected {
+			t.Errorf("TestContains ContainsCh %v: expected %v, got %v", tc.name, tc.expected, actContainsCh)
+		}
+	}
+}
