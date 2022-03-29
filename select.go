@@ -18,11 +18,7 @@ func SelectCh[TSource, TResult any](in <-chan TSource, selector func(in TSource)
 	out := make(chan TResult)
 
 	go func() {
-		for {
-			v, ok := <-in
-			if !ok {
-				break
-			}
+		for v := range in {
 			elem := selector(v)
 			out <- elem
 		}

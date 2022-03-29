@@ -18,15 +18,12 @@ func WhereCh[T any](in <-chan T, pred func(elem T) bool) <-chan T {
 	out := make(chan T)
 
 	go func() {
-		for {
-			v, ok := <-in
-			if !ok {
-				break
-			}
+		for v := range in {
 			if pred(v) {
 				out <- v
 			}
 		}
+
 		close(out)
 	}()
 

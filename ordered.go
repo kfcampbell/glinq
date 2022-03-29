@@ -33,11 +33,8 @@ func Min[T constraints.Ordered](list []T) (T, error) {
 func MinCh[T constraints.Ordered](ch <-chan T) (T, error) {
 	init := false
 	var min T
-	for {
-		v, ok := <-ch
-		if !ok {
-			break
-		}
+
+	for v := range ch {
 		if !init {
 			min = v
 			init = true
@@ -77,11 +74,7 @@ func Max[T constraints.Ordered](list []T) (T, error) {
 func MaxCh[T constraints.Ordered](ch <-chan T) (T, error) {
 	init := false
 	var max T
-	for {
-		v, ok := <-ch
-		if !ok {
-			break
-		}
+	for v := range ch {
 		if !init {
 			max = v
 			init = true
