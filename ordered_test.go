@@ -108,3 +108,79 @@ func TestMaxError(t *testing.T) {
 		t.Errorf("TestMaxError MaxCh: expected err, got nil and %v max", maxCh)
 	}
 }
+
+func TestAverageInt(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected int
+	}{
+		{
+			"happyCase",
+			[]int{3, 4, 5},
+			4,
+		},
+		{
+			"truncate",
+			[]int{3, 4},
+			3,
+		},
+	}
+	for _, tc := range cases {
+		actualAvg, err := Average(tc.input)
+		if actualAvg != tc.expected || err != nil {
+			t.Errorf("TestAverageInt %v: expected %v, got %v, err %v", tc.name, tc.expected, actualAvg, err)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualAvgCh, err := AverageCh(ch)
+		if actualAvgCh != tc.expected || err != nil {
+			t.Errorf("TestAverageInt AverageCh %v: expected %v, got %v, err %v", tc.name, tc.expected, actualAvgCh, err)
+		}
+	}
+}
+
+func TestAverageIntErr(t *testing.T) {
+	input := make([]int, 0)
+	actualAvg, err := Average(input)
+	if err == nil {
+		t.Errorf("TestAverageIntErr wanted err, got nil, return %v", actualAvg)
+	}
+
+	ch := sliceToChan(input)
+	actualAvgCh, err := AverageCh(ch)
+	if err == nil {
+		t.Errorf("TestAverageIntErr AverageCh wanted err, got nil, return %v", actualAvgCh)
+	}
+}
+
+func TestAverageFloat(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []float32
+		expected float32
+	}{
+		{
+			"happyCase",
+			[]float32{3.5, 4.0, 6.0},
+			4.5,
+		},
+		{
+			"repeating",
+			[]float32{3.5, 4.0, 5.5},
+			4.3333335,
+		},
+	}
+	for _, tc := range cases {
+		actualAvg, err := Average(tc.input)
+		if actualAvg != tc.expected || err != nil {
+			t.Errorf("TestAverageInt %v: expected %v, got %v, err %v", tc.name, tc.expected, actualAvg, err)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualAvgCh, err := AverageCh(ch)
+		if actualAvgCh != tc.expected || err != nil {
+			t.Errorf("TestAverageInt AverageCh %v: expected %v, got %v, err %v", tc.name, tc.expected, actualAvgCh, err)
+		}
+	}
+}

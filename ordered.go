@@ -88,3 +88,31 @@ func MaxCh[T constraints.Ordered](ch <-chan T) (T, error) {
 	}
 	return max, nil
 }
+
+// Average takes in a slice of numbers and returns the computed average
+// in the type it was given.
+func Average[T constraints.Integer | constraints.Float](input []T) (T, error) {
+	var sum T
+	if len(input) == 0 {
+		return sum, fmt.Errorf("cannot take average of an empty slice")
+	}
+	for _, v := range input {
+		sum += v
+	}
+	return sum / T(len(input)), nil
+}
+
+// AverageCh takes in an input channel and returns the computed average
+// of elements received in the type it's given.
+func AverageCh[T constraints.Integer | constraints.Float](input <-chan T) (T, error) {
+	var i T
+	var sum T
+	for v := range input {
+		sum += v
+		i++
+	}
+	if i == 0 {
+		return sum, fmt.Errorf("cannot take average of an empty channel")
+	}
+	return sum / i, nil
+}
