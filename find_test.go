@@ -319,3 +319,57 @@ func TestMinInt(t *testing.T) {
 		}
 	}
 }
+
+func TestMinCh(t *testing.T) {
+	cases := []struct {
+		name     string
+		expected int
+		fill     func(ch chan<- int)
+	}{
+		{
+			name:     "happyCase",
+			expected: 0,
+			fill: func(ch chan<- int) {
+				i := 0
+				for i < 10 {
+					ch <- i
+					i++
+				}
+				close(ch)
+			},
+		},
+		{
+			name:     "nonTrivial",
+			expected: -15,
+			fill: func(ch chan<- int) {
+				i := 0
+				ch <- -10
+				for i < 100 {
+					ch <- (i * 2) % 3
+					i++
+				}
+				ch <- -15
+				close(ch)
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		ch := make(chan int)
+		go tc.fill(ch)
+		actual, err := MinCh(ch)
+		if err != nil {
+			t.Errorf("TestMinCh %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+	}
+}
+
+func TestMinChError(t *testing.T) {
+	ch := make(chan int)
+	close(ch)
+
+	min, err := MinCh(ch)
+	if err == nil {
+		t.Errorf("TestMinChError: expected err, got nil and %v min", min)
+	}
+}

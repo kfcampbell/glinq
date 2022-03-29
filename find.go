@@ -66,6 +66,31 @@ func Min[T constraints.Ordered](list []T) (T, error) {
 	return min, nil
 }
 
+// MinCh returns the first instance of the minimum element
+// received from the given channel.
+func MinCh[T constraints.Ordered](ch <-chan T) (T, error) {
+	init := false
+	var min T
+	for {
+		v, ok := <-ch
+		if !ok {
+			break
+		}
+		if !init {
+			min = v
+			init = true
+		}
+		if min > v {
+			min = v
+		}
+	}
+
+	if !init {
+		return min, fmt.Errorf("cannot find minimum value of empty chan")
+	}
+	return min, nil
+}
+
 // Max returns the first instance of the maximum element
 // present in the given slice.
 func Max[T constraints.Ordered](list []T) (T, error) {
