@@ -321,90 +321,47 @@ func TestFindString(t *testing.T) {
 
 func TestMinInt(t *testing.T) {
 	cases := []struct {
-		name        string
-		input       []int
-		expected    int
-		expectedErr bool
+		name     string
+		input    []int
+		expected int
 	}{
 		{
 			"happyCase",
 			[]int{14, 8, 9, 12},
 			8,
-			false,
 		},
 		{
-			"emptySlice",
-			[]int{},
-			8,
-			true,
+			"negatives",
+			[]int{-13, -11, -98, 45, 0, 199, -2},
+			-98,
 		},
 	}
 	for _, tc := range cases {
-		actual, err := Min(tc.input)
-		if tc.expectedErr && err == nil {
-			t.Errorf("TestMinInt %v: expected an error and got nil", tc.name)
+		actMin, err := Min(tc.input)
+
+		if actMin != tc.expected || err != nil {
+			t.Errorf("TestMinInt %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMin, err)
 		}
 
-		if !tc.expectedErr && err != nil {
-			t.Errorf("TestMinInt %v: did not expect error but got %v", tc.name, err)
-		}
-
-		if !tc.expectedErr && actual != tc.expected {
-			t.Errorf("TestMinInt %v: expected %v, got %v", tc.name, tc.expected, actual)
+		ch := sliceToChan(tc.input)
+		actMinCh, err := MinCh(ch)
+		if actMinCh != tc.expected || err != nil {
+			t.Errorf("TestMinInt MinCh %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMinCh, err)
 		}
 	}
 }
 
-func TestMinCh(t *testing.T) {
-	cases := []struct {
-		name     string
-		expected int
-		fill     func(ch chan<- int)
-	}{
-		{
-			name:     "happyCase",
-			expected: 0,
-			fill: func(ch chan<- int) {
-				i := 0
-				for i < 10 {
-					ch <- i
-					i++
-				}
-				close(ch)
-			},
-		},
-		{
-			name:     "nonTrivial",
-			expected: -15,
-			fill: func(ch chan<- int) {
-				i := 0
-				ch <- -10
-				for i < 100 {
-					ch <- (i * 2) % 3
-					i++
-				}
-				ch <- -15
-				close(ch)
-			},
-		},
-	}
+func TestMinError(t *testing.T) {
+	list := make([]int, 0)
 
-	for _, tc := range cases {
-		ch := make(chan int)
-		go tc.fill(ch)
-		actual, err := MinCh(ch)
-		if err != nil {
-			t.Errorf("TestMinCh %v: expected %v, got %v", tc.name, tc.expected, actual)
-		}
-	}
-}
-
-func TestMinChError(t *testing.T) {
-	ch := make(chan int)
-	close(ch)
-
-	min, err := MinCh(ch)
+	min, err := Min(list)
 	if err == nil {
-		t.Errorf("TestMinChError: expected err, got nil and %v min", min)
+		t.Errorf("TestMinError: expected err, got nil and %v min", min)
+	}
+
+	ch := sliceToChan(list)
+	minCh, err := MinCh(ch)
+	if err == nil {
+		t.Errorf("TestMinError MinCh: expected err, got nil and %v min", minCh)
 	}
 }
