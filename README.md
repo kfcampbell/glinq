@@ -16,3 +16,5 @@ LINQ vs. Lodash API naming/scheme?
 		- selectMany
 	- where
 	- aggregate
+
+Is there a way to add these methods onto generic slices/chans? Probably not, but if possible, should we?
