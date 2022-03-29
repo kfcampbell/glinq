@@ -7,3 +7,4 @@ Long-term TODOs:
 - Use fuzzing in testing
 - Full coverage of functions in samber/lo
 - Complete testing with code coverage
+- Cancellation (esp. in channel operations)
