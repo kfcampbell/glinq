@@ -27,3 +27,41 @@ func SelectCh[TSource, TResult any](in <-chan TSource, selector func(in TSource)
 
 	return out
 }
+
+func Chunk[T any](input []T, size int) [][]T {
+	chunks := make([][]T, 0, (len(input)/size)+1)
+
+	currChunk := make([]T, 0, size)
+	for _, v := range input {
+		if len(currChunk) == size {
+			chunks = append(chunks, currChunk)
+			currChunk = make([]T, 0, size)
+		}
+		currChunk = append(currChunk, v)
+	}
+	if len(currChunk) != 0 {
+		chunks = append(chunks, currChunk)
+	}
+	return chunks
+}
+
+func ChunkCh[T any](input <-chan T, size int) <-chan []T {
+	res := make(chan []T)
+
+	go func() {
+		currChunk := make([]T, 0, size)
+		for v := range input {
+			if len(currChunk) == size {
+				res <- currChunk
+				currChunk = make([]T, 0, size)
+			}
+			currChunk = append(currChunk, v)
+		}
+		if len(currChunk) != 0 {
+			res <- currChunk
+		}
+		close(res)
+	}()
+
+	return res
+}

@@ -16,6 +16,23 @@ func sliceValueEquality[T comparable](a, b []T) bool {
 	return true
 }
 
+func sliceOfSliceValueEquality[T comparable](a, b [][]T) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if len(a[i]) != len(b[i]) {
+			return false
+		}
+		for k := range a[i] {
+			if a[i][k] != b[i][k] {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func chanToSlice[T any](in <-chan T) []T {
 	res := make([]T, 0)
 	for {
@@ -103,5 +120,63 @@ func TestSelect(t *testing.T) {
 			t.Errorf("SelectTest SelectCh error: expected slices to be equal. wanted %v, got %v", tc.expected, actualSelectedCh)
 		}
 
+	}
+}
+
+func TestChunk(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		size     int
+		expected [][]int
+	}{
+		{
+			"happyEvenCase",
+			[]int{1, 2, 3, 4, 5, 6},
+			2,
+			[][]int{
+				{1, 2},
+				{3, 4},
+				{5, 6},
+			},
+		},
+		{
+			"happyOddCase",
+			[]int{1, 2, 3, 4, 5},
+			2,
+			[][]int{
+				{1, 2},
+				{3, 4},
+				{5},
+			},
+		},
+		{
+			"emptyCase",
+			[]int{},
+			8,
+			[][]int{},
+		},
+		{
+			"oneChunk",
+			[]int{1, 2, 3},
+			3,
+			[][]int{
+				{1, 2, 3},
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		actualChunk := Chunk(tc.input, tc.size)
+		if !sliceOfSliceValueEquality(actualChunk, tc.expected) {
+			t.Errorf("TestChunk %v: expected %v, got %v", tc.name, tc.expected, actualChunk)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualChunkCh := ChunkCh(ch, tc.size)
+		result := chanToSlice(actualChunkCh)
+		if !sliceOfSliceValueEquality(result, tc.expected) {
+			t.Errorf("TestChunk ChunkCh %v: expected %v, got %v", tc.name, tc.expected, result)
+		}
 	}
 }
