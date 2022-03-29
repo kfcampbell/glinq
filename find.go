@@ -61,16 +61,25 @@ func LastIndexOfCh[T comparable](ch <-chan T, elem T) int {
 
 // Find returns the element present and an error if the item is not present
 func Find[T comparable](list []T, is func(a T) bool) (T, error) {
-	var empty T
-	if len(list) == 0 {
-		return empty, fmt.Errorf("cannot find item in empty list")
-	}
 	for _, elem := range list {
 		if is(elem) {
 			return elem, nil
 		}
 	}
+	var empty T
 	return empty, fmt.Errorf("could not find item in list")
+}
+
+func FindCh[T comparable](ch <-chan T, is func(a T) bool) (T, error) {
+	for {
+		elem, ok := <-ch
+		if !ok {
+			return elem, fmt.Errorf("cannot find item in empty chan")
+		}
+		if is(elem) {
+			return elem, nil
+		}
+	}
 }
 
 // Min returns the first instance of the minimum element

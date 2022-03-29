@@ -199,11 +199,10 @@ func TestLastIndexOfString(t *testing.T) {
 
 func TestFindInt(t *testing.T) {
 	cases := []struct {
-		name        string
-		input       []int
-		pred        func(elem int) bool
-		expected    int
-		expectedErr bool
+		name     string
+		input    []int
+		pred     func(elem int) bool
+		expected int
 	}{
 		{
 			"happyCase",
@@ -212,7 +211,6 @@ func TestFindInt(t *testing.T) {
 				return elem == 2
 			},
 			2,
-			false,
 		},
 		{
 			"expandedCase",
@@ -221,16 +219,35 @@ func TestFindInt(t *testing.T) {
 				return elem == 412
 			},
 			412,
-			false,
 		},
+	}
+	for _, tc := range cases {
+		actFind, err := Find(tc.input, tc.pred)
+
+		if err != nil || actFind != tc.expected {
+			t.Errorf("TestFindInt %v: expected %v, got %v, err %v", tc.name, tc.expected, actFind, err)
+		}
+
+		ch := sliceToChan(tc.input)
+		actFindCh, err := FindCh(ch, tc.pred)
+		if err != nil || actFindCh != tc.expected {
+			t.Errorf("TestFindInt FindCh %v: expected %v, got %v, err %v", tc.name, tc.expected, actFindCh, err)
+		}
+	}
+}
+
+func TestFindIntErr(t *testing.T) {
+	cases := []struct {
+		name  string
+		input []int
+		pred  func(elem int) bool
+	}{
 		{
 			"doesNotExist",
 			[]int{1, 4, 3},
 			func(elem int) bool {
 				return elem == 412
 			},
-			412,
-			true,
 		},
 		{
 			"emptySlice",
@@ -238,33 +255,28 @@ func TestFindInt(t *testing.T) {
 			func(elem int) bool {
 				return elem == 412
 			},
-			412,
-			true,
 		},
 	}
+
 	for _, tc := range cases {
-		actual, err := Find(tc.input, tc.pred)
-		if tc.expectedErr && err == nil {
-			t.Errorf("TestFindInt %v: expected an error and got nil", tc.name)
+		actFind, err := Find(tc.input, tc.pred)
+		if err == nil {
+			t.Errorf("TestFindIntErr %v: wanted err but got nil, found :%v", tc.name, actFind)
 		}
-
-		if !tc.expectedErr && err != nil {
-			t.Errorf("TestFindInt %v: did not expect error but got %v", tc.name, err)
-		}
-
-		if !tc.expectedErr && actual != tc.expected {
-			t.Errorf("TestFindInt %v: expected %v, got %v", tc.name, tc.expected, actual)
+		ch := sliceToChan(tc.input)
+		actFindCh, err := FindCh(ch, tc.pred)
+		if err == nil {
+			t.Errorf("TestFindIntErr FindCh %v: wanted err but got nil, found :%v", tc.name, actFindCh)
 		}
 	}
 }
 
 func TestFindString(t *testing.T) {
 	cases := []struct {
-		name        string
-		input       []string
-		pred        func(elem string) bool
-		expected    string
-		expectedErr bool
+		name     string
+		input    []string
+		pred     func(elem string) bool
+		expected string
 	}{
 		{
 			"happyCase",
@@ -273,7 +285,6 @@ func TestFindString(t *testing.T) {
 				return elem == "def"
 			},
 			"def",
-			false,
 		},
 		{
 			"expandedCase",
@@ -282,39 +293,17 @@ func TestFindString(t *testing.T) {
 				return elem == "hijk"
 			},
 			"hijk",
-			false,
-		},
-		{
-			"doesNotExist",
-			[]string{"abc", "def", "hijk"},
-			func(elem string) bool {
-				return elem == "lmnop"
-			},
-			"lmnop",
-			true,
-		},
-		{
-			"emptySlice",
-			[]string{},
-			func(elem string) bool {
-				return elem == "def"
-			},
-			"def",
-			true,
 		},
 	}
 	for _, tc := range cases {
-		actual, err := Find(tc.input, tc.pred)
-		if tc.expectedErr && err == nil {
-			t.Errorf("TestFindString %v: expected an error and got nil", tc.name)
+		actFind, err := Find(tc.input, tc.pred)
+		if err != nil || actFind != tc.expected {
+			t.Errorf("TestFindString %v: expected %v, got %v, err %v", tc.name, tc.expected, actFind, err)
 		}
-
-		if !tc.expectedErr && err != nil {
-			t.Errorf("TestFindString %v: did not expect error but got %v", tc.name, err)
-		}
-
-		if !tc.expectedErr && actual != tc.expected {
-			t.Errorf("TestFindString %v: expected %v, got %v", tc.name, tc.expected, actual)
+		ch := sliceToChan(tc.input)
+		actFindCh, err := FindCh(ch, tc.pred)
+		if err != nil || actFindCh != tc.expected {
+			t.Errorf("TestFindString FindCh %v: expected %v, got %v, err %v", tc.name, tc.expected, actFindCh, err)
 		}
 	}
 }
