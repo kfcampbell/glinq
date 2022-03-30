@@ -5,17 +5,18 @@ import (
 )
 
 func TestWhere(t *testing.T) {
+	// TODO: Either add more data, or convert this to a non-data-driven test
 	cases := []struct {
 		name     string
 		input    []int
-		pred     func(elem int) bool
+		pred     func(value int) bool
 		expected []int
 	}{
 		{
 			name:  "evens",
 			input: []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			pred: func(elem int) bool {
-				return elem%2 == 0
+			pred: func(value int) bool {
+				return value%2 == 0
 			},
 			expected: []int{0, 2, 4, 6, 8},
 		},

@@ -4,17 +4,6 @@ import (
 	"testing"
 )
 
-func sliceToChan[T any](input []T) <-chan T {
-	ch := make(chan T)
-	go func() {
-		for _, v := range input {
-			ch <- v
-		}
-		close(ch)
-	}()
-	return ch
-}
-
 func TestMinInt(t *testing.T) {
 	cases := []struct {
 		name     string
@@ -32,9 +21,9 @@ func TestMinInt(t *testing.T) {
 			-98,
 		},
 	}
+
 	for _, tc := range cases {
 		actMin, err := Min(tc.input)
-
 		if actMin != tc.expected || err != nil {
 			t.Errorf("TestMinInt %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMin, err)
 		}
@@ -79,9 +68,9 @@ func TestMaxInt(t *testing.T) {
 			199,
 		},
 	}
+
 	for _, tc := range cases {
 		actMax, err := Max(tc.input)
-
 		if actMax != tc.expected || err != nil {
 			t.Errorf("TestMaxInt %v: expected %v, got %v, err: %v", tc.name, tc.expected, actMax, err)
 		}
@@ -126,6 +115,7 @@ func TestAverageInt(t *testing.T) {
 			3,
 		},
 	}
+
 	for _, tc := range cases {
 		actualAvg, err := Average(tc.input)
 		if actualAvg != tc.expected || err != nil {
@@ -142,6 +132,7 @@ func TestAverageInt(t *testing.T) {
 
 func TestAverageIntErr(t *testing.T) {
 	input := make([]int, 0)
+
 	actualAvg, err := Average(input)
 	if err == nil {
 		t.Errorf("TestAverageIntErr wanted err, got nil, return %v", actualAvg)
@@ -171,6 +162,7 @@ func TestAverageFloat(t *testing.T) {
 			4.3333335,
 		},
 	}
+
 	for _, tc := range cases {
 		actualAvg, err := Average(tc.input)
 		if actualAvg != tc.expected || err != nil {

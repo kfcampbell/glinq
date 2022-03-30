@@ -4,83 +4,98 @@ import "fmt"
 
 // IndexOf returns the index of the first instance of the given element
 // in the given slice. If the given element is not present, -1 is returned.
-func IndexOf[T comparable](input []T, elem T) int {
-	for i, v := range input {
-		if v == elem {
+func IndexOf[TSource comparable](source []TSource, value TSource) int {
+	for i, v := range source {
+		if v == value {
 			return i
 		}
 	}
+
 	return -1
 }
 
-func IndexOfCh[T comparable](ch <-chan T, elem T) int {
+// IndexOf returns the index of the first instance of the given element received
+// from the given channel. If the given element is not present, -1 is returned.
+func IndexOfCh[TSource comparable](source <-chan TSource, value TSource) int {
 	i := 0
-	for v := range ch {
-		if v == elem {
+
+	for v := range source {
+		if v == value {
 			return i
 		}
 		i++
 	}
+
 	return -1
 }
 
 // LastIndexOf returns the index of the last instance of the given element in
 // the given slice. If the given element is not present, -1 is returned.
-func LastIndexOf[T comparable](input []T, elem T) int {
-	i := len(input) - 1
-	for i >= 0 {
-		if input[i] == elem {
+func LastIndexOf[TSource comparable](source []TSource, value TSource) int {
+	for i := len(source) - 1; i >= 0; i-- {
+		if source[i] == value {
 			return i
 		}
-		i--
 	}
+
 	return -1
 }
 
-func LastIndexOfCh[T comparable](ch <-chan T, elem T) int {
+// LastIndexOf returns the index of the last instance of the given element received
+// from the given channel. If the given element is not present, -1 is returned.
+func LastIndexOfCh[TSource comparable](source <-chan TSource, value TSource) int {
 	i := 0
 	lastIndex := -1
 
-	for v := range ch {
-		if v == elem {
+	for v := range source {
+		if v == value {
 			lastIndex = i
 		}
 		i++
 	}
+
 	return lastIndex
 }
 
-// Find returns the element present and an error if the item is not present
-func Find[T any](input []T, pred func(a T) bool) (T, error) {
-	for _, elem := range input {
-		if pred(elem) {
-			return elem, nil
-		}
-	}
-	var empty T
-	return empty, fmt.Errorf("could not find item in input")
-}
-
-func FindCh[T any](input <-chan T, pred func(a T) bool) (T, error) {
-	for v := range input {
-		if pred(v) {
+// First returns the first element in a slice that satisfies a specified condition,
+// or an error if no element matches the specific condition.
+func First[TSource any](source []TSource, predicate func(value TSource) bool) (TSource, error) {
+	for _, v := range source {
+		if predicate(v) {
 			return v, nil
 		}
 	}
-	var empty T
-	return empty, fmt.Errorf("cannot find item in empty chan")
+
+	var empty TSource
+	return empty, fmt.Errorf("could not find item in input")
 }
+
+// FirstCh returns the first element received from a channel that satisfies a specified
+// condition, or an error if no element matches the specific condition.
+func FirstCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) (TSource, error) {
+	for v := range source {
+		if predicate(v) {
+			return v, nil
+		}
+	}
+
+	var empty TSource
+	return empty, fmt.Errorf("cannot find item in chan")
+}
+
+// TODO: These do not exactly match Contains in LINQ, which instead would have this signature:
+//   func Contains[TSource any](source []TSource, value TSource) bool
 
 // Contains takes in a slice and a predicate, and returns true if the predicate
 // matches any element in the slice.
-func Contains[T any](input []T, pred func(a T) bool) bool {
-	_, err := Find(input, pred)
+func Contains[TSource any](source []TSource, predicate func(value TSource) bool) bool {
+	_, err := First(source, predicate)
 	return err == nil
 }
 
 // ContainsCh takes in a channel and a predicate, and returns true if the
 // predicate matches any element sent down the channel.
-func ContainsCh[T any](input <-chan T, pred func(a T) bool) bool {
-	_, err := FindCh(input, pred)
+func ContainsCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) bool {
+	_, err := FirstCh(source, predicate)
 	return err == nil
 }

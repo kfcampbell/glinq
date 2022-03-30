@@ -9,15 +9,15 @@ func TestAggregate(t *testing.T) {
 		name     string
 		input    []string
 		seed     int
-		agg      func(seed int, elem string) int
+		agg      func(seed int, value string) int
 		expected int
 	}{
 		{
 			"accumulatingLength",
 			[]string{"one", "two", "three"},
 			0,
-			func(seed int, elem string) int {
-				return seed + len(elem)
+			func(seed int, value string) int {
+				return seed + len(value)
 			},
 			11,
 		},
@@ -25,8 +25,8 @@ func TestAggregate(t *testing.T) {
 			"emptyCase",
 			[]string{},
 			0,
-			func(seed int, elem string) int {
-				return seed + len(elem)
+			func(seed int, value string) int {
+				return seed + len(value)
 			},
 			0,
 		},

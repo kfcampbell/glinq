@@ -1,45 +1,45 @@
 package main
 
-// All takes in a slice and a predicate, and returns true
-// if every element of the slice matches the predicate.
-func All[T any](input []T, pred func(elem T) bool) bool {
-	for _, v := range input {
-		if !pred(v) {
+// All determines whether all elements of a slice satisfy a condition.
+func All[TSource any](source []TSource, predicate func(value TSource) bool) bool {
+	for _, v := range source {
+		if !predicate(v) {
 			return false
 		}
 	}
+
 	return true
 }
 
-// AllCh takes in a channel and a predicate, and returns true if every
-// element received from the channel matches the predicate.
-func AllCh[T any](input <-chan T, pred func(elem T) bool) bool {
-	for v := range input {
-		if !pred(v) {
+// AllCh determines whether all elements received from a channel satisfy a condition.
+func AllCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) bool {
+	for v := range source {
+		if !predicate(v) {
 			return false
 		}
 	}
+
 	return true
 }
 
-// Any takes in a slice and a predicate, and returns true
-// if any element of the slice matches the predicate.
-func Any[T any](input []T, pred func(elem T) bool) bool {
-	for _, v := range input {
-		if pred(v) {
+// Any determines whether any element of a slice satisfies a condition.
+func Any[TSource any](source []TSource, predicate func(value TSource) bool) bool {
+	for _, v := range source {
+		if predicate(v) {
 			return true
 		}
 	}
+
 	return false
 }
 
-// AnyCh takes in a channel and a predicate, and returns true
-// if any element received from the chan matches the predicate.
-func AnyCh[T any](input <-chan T, pred func(elem T) bool) bool {
-	for v := range input {
-		if pred(v) {
+// AnyCh determines whether any element received from a channel satisfies a condition.
+func AnyCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) bool {
+	for v := range source {
+		if predicate(v) {
 			return true
 		}
 	}
+
 	return false
 }

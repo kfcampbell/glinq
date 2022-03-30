@@ -6,40 +6,37 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-// Min returns the first instance of the minimum element
-// present in the given slice.
-func Min[T constraints.Ordered](input []T) (T, error) {
-	var min T
-	if len(input) == 0 {
-		return min, fmt.Errorf("cannot find minimum value of empty input")
-	}
-	if len(input) == 1 {
-		return input[0], nil
-	}
-
-	i := 1
-	min = input[0]
-	for i < len(input) {
-		if min > input[i] {
-			min = input[i]
-		}
-		i++
-	}
-	return min, nil
-}
-
-// MinCh returns the first instance of the minimum element
-// received from the given channel.
-func MinCh[T constraints.Ordered](ch <-chan T) (T, error) {
+// Min returns the minimum value in a slice of values
+func Min[TSource constraints.Ordered](source []TSource) (TSource, error) {
 	init := false
-	var min T
+	var min TSource
 
-	for v := range ch {
+	for _, v := range source {
 		if !init {
 			min = v
 			init = true
+		} else if min > v {
+			min = v
 		}
-		if min > v {
+	}
+
+	if !init {
+		return min, fmt.Errorf("cannot find minimum value of empty slice")
+	}
+
+	return min, nil
+}
+
+// MinCh returns the minimum value in a channel of values
+func MinCh[TSource constraints.Ordered](source <-chan TSource) (TSource, error) {
+	init := false
+	var min TSource
+
+	for v := range source {
+		if !init {
+			min = v
+			init = true
+		} else if min > v {
 			min = v
 		}
 	}
@@ -47,72 +44,81 @@ func MinCh[T constraints.Ordered](ch <-chan T) (T, error) {
 	if !init {
 		return min, fmt.Errorf("cannot find minimum value of empty chan")
 	}
+
 	return min, nil
 }
 
-// Max returns the first instance of the maximum element
-// present in the given slice.
-func Max[T constraints.Ordered](input []T) (T, error) {
-	var max T
-	if len(input) == 0 {
-		return max, fmt.Errorf("cannot find maximum value of empty input")
-	}
-	if len(input) == 1 {
-		return input[1], nil
-	}
-	i := 1
-	max = input[0]
-	for i < len(input) {
-		if max < input[i] {
-			max = input[i]
-		}
-		i++
-	}
-	return max, nil
-}
-
-func MaxCh[T constraints.Ordered](ch <-chan T) (T, error) {
+// Max returns the maximum value in a slice of values
+func Max[TSource constraints.Ordered](source []TSource) (TSource, error) {
 	init := false
-	var max T
-	for v := range ch {
+	var max TSource
+
+	for _, v := range source {
 		if !init {
 			max = v
 			init = true
-		}
-		if max < v {
+		} else if max < v {
 			max = v
 		}
 	}
+
 	if !init {
-		return max, fmt.Errorf("cannot find maximum value of empty chan")
+		return max, fmt.Errorf("cannot find maximum value of empty slice")
 	}
+
 	return max, nil
 }
 
-// Average takes in a slice of numbers and returns the computed average
-// in the type it was given.
-func Average[T constraints.Integer | constraints.Float](input []T) (T, error) {
-	var sum T
-	if len(input) == 0 {
-		return sum, fmt.Errorf("cannot take average of an empty slice")
+// MaxCh returns the maximum value in a channel of values
+func MaxCh[TSource constraints.Ordered](source <-chan TSource) (TSource, error) {
+	init := false
+	var max TSource
+
+	for v := range source {
+		if !init {
+			max = v
+			init = true
+		} else if max < v {
+			max = v
+		}
 	}
-	for _, v := range input {
-		sum += v
+
+	if !init {
+		return max, fmt.Errorf("cannot find maximum value of empty chan")
 	}
-	return sum / T(len(input)), nil
+
+	return max, nil
 }
 
-// AverageCh takes in an input channel and returns the computed average
-// of elements received in the type it's given.
-func AverageCh[T constraints.Integer | constraints.Float](input <-chan T) (T, error) {
-	var i T
-	var sum T
-	for v := range input {
+// Average computes the average of a slice of values
+func Average[TSource constraints.Integer | constraints.Float](source []TSource) (TSource, error) {
+	i := TSource(len(source))
+	var sum TSource
+
+	for _, v := range source {
+		sum += v
+	}
+
+	if i == 0 {
+		return sum, fmt.Errorf("cannot take average of an empty slice")
+	}
+
+	return sum / i, nil
+}
+
+// AverageCh computes the average of a channel of values
+func AverageCh[TSource constraints.Integer | constraints.Float](source <-chan TSource) (TSource, error) {
+	var i TSource
+	var sum TSource
+
+	for v := range source {
 		sum += v
 		i++
 	}
+
 	if i == 0 {
 		return sum, fmt.Errorf("cannot take average of an empty channel")
 	}
+
 	return sum / i, nil
 }
