@@ -1,25 +1,25 @@
 package main
 
-// Where takes in a slice and a predicate, and returns all elements
-// of the given slice for which the predicate is true.
-func Where[T any](input []T, pred func(elem T) bool) []T {
-	res := make([]T, 0)
-	for _, v := range input {
-		if pred(v) {
-			res = append(res, v)
+// Where filters a slice of values based on a predicate
+func Where[TSource any](source []TSource, predicate func(value TSource) bool) []TSource {
+	result := make([]TSource, 0)
+
+	for _, v := range source {
+		if predicate(v) {
+			result = append(result, v)
 		}
 	}
-	return res
+
+	return result
 }
 
-// WhereCh takes in a channel and a predicate, and returns a channel which will
-// receive all elements for the given channel for which the predicate is true.
-func WhereCh[T any](in <-chan T, pred func(elem T) bool) <-chan T {
-	out := make(chan T)
+// Where filters a channel of values based on a predicate
+func WhereCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) <-chan TSource {
+	out := make(chan TSource)
 
 	go func() {
-		for v := range in {
-			if pred(v) {
+		for v := range source {
+			if predicate(v) {
 				out <- v
 			}
 		}

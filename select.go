@@ -1,67 +1,75 @@
 package main
 
-// Select takes in an input slice and a selector function, and returns
-// a slice of the selected TResult. This operation is similar to Map in
-// other ecosystems.
-func Select[TSource, TResult any](input []TSource, selector func(in TSource) TResult) []TResult {
-	res := make([]TResult, 0)
-	for _, elem := range input {
-		sel := selector(elem)
-		res = append(res, sel)
+// Select projects each element of a slice into a new form
+func Select[TSource, TResult any](source []TSource, selector func(value TSource) TResult) []TResult {
+	result := make([]TResult, 0)
+
+	for _, v := range source {
+		sel := selector(v)
+		result = append(result, sel)
 	}
-	return res
+
+	return result
 }
 
-// SelectCh takes in an input channel and a selector function, and returns
-// a channel of the selected result.
-func SelectCh[TSource, TResult any](in <-chan TSource, selector func(in TSource) TResult) <-chan TResult {
-	out := make(chan TResult)
+// SelectCh projects each element of a channel into a new form
+func SelectCh[TSource, TResult any](source <-chan TSource, selector func(value TSource) TResult) <-chan TResult {
+	result := make(chan TResult)
 
 	go func() {
-		for v := range in {
-			elem := selector(v)
-			out <- elem
+		for v := range source {
+			value := selector(v)
+			result <- value
 		}
-		close(out)
+
+		close(result)
 	}()
 
-	return out
+	return result
 }
 
-func Chunk[T any](input []T, size int) [][]T {
-	chunks := make([][]T, 0, (len(input)/size)+1)
+// Chunk splits the elements of a slice into chunks of size at most "size"
+func Chunk[TSource any](source []TSource, size int) [][]TSource {
+	result := make([][]TSource, 0, (len(source)/size)+1)
+	chunk := make([]TSource, 0, size)
 
-	currChunk := make([]T, 0, size)
-	for _, v := range input {
-		if len(currChunk) == size {
-			chunks = append(chunks, currChunk)
-			currChunk = make([]T, 0, size)
+	for _, v := range source {
+		if len(chunk) == size {
+			result = append(result, chunk)
+			chunk = make([]TSource, 0, size)
 		}
-		currChunk = append(currChunk, v)
+
+		chunk = append(chunk, v)
 	}
-	if len(currChunk) != 0 {
-		chunks = append(chunks, currChunk)
+
+	if len(chunk) != 0 {
+		result = append(result, chunk)
 	}
-	return chunks
+
+	return result
 }
 
-func ChunkCh[T any](input <-chan T, size int) <-chan []T {
-	res := make(chan []T)
+// ChunkCh splits the elements of a channel into chunks of size at most "size"
+func ChunkCh[TSource any](source <-chan TSource, size int) <-chan []TSource {
+	result := make(chan []TSource)
 
 	go func() {
-		currChunk := make([]T, 0, size)
-		for v := range input {
-			if len(currChunk) == size {
-				res <- currChunk
-				currChunk = make([]T, 0, size)
+		chunk := make([]TSource, 0, size)
+
+		for v := range source {
+			if len(chunk) == size {
+				result <- chunk
+				chunk = make([]TSource, 0, size)
 			}
-			currChunk = append(currChunk, v)
+			chunk = append(chunk, v)
 		}
-		if len(currChunk) != 0 {
-			res <- currChunk
+
+		if len(chunk) != 0 {
+			result <- chunk
 		}
-		close(res)
+
+		close(result)
 	}()
 
-	return res
+	return result
 }

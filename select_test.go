@@ -4,46 +4,6 @@ import (
 	"testing"
 )
 
-func sliceValueEquality[T comparable](a, b []T) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
-}
-
-func sliceOfSliceValueEquality[T comparable](a, b [][]T) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if len(a[i]) != len(b[i]) {
-			return false
-		}
-		for k := range a[i] {
-			if a[i][k] != b[i][k] {
-				return false
-			}
-		}
-	}
-	return true
-}
-
-func chanToSlice[T any](in <-chan T) []T {
-	res := make([]T, 0)
-	for {
-		v, ok := <-in
-		if !ok {
-			return res
-		}
-		res = append(res, v)
-	}
-}
-
 func TestSelect(t *testing.T) {
 	type simple struct {
 		id   int
@@ -119,7 +79,6 @@ func TestSelect(t *testing.T) {
 		if !sliceValueEquality(res, tc.expected) {
 			t.Errorf("SelectTest SelectCh error: expected slices to be equal. wanted %v, got %v", tc.expected, actualSelectedCh)
 		}
-
 	}
 }
 
