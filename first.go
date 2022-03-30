@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // IndexOf returns the index of the first instance of the given element
 // in the given slice. If the given element is not present, -1 is returned.
@@ -98,4 +100,19 @@ func Contains[TSource any](source []TSource, predicate func(value TSource) bool)
 func ContainsCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) bool {
 	_, err := FirstCh(source, predicate)
 	return err == nil
+}
+
+// Count returns the number of elements in the given slice.
+func Count[TSource any](source []TSource) int {
+	return len(source)
+}
+
+// CountCh takes in a channel and returns the number of elements
+// passed down the channel.
+func CountCh[TSource any](source <-chan TSource) int {
+	i := 0
+	for _ = range source {
+		i++
+	}
+	return i
 }

@@ -341,3 +341,40 @@ func TestContains(t *testing.T) {
 		}
 	}
 }
+
+func TestCount(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected int
+	}{
+		{
+			"happyCase",
+			[]int{1, 2, 3, 4, 5},
+			5,
+		},
+		{
+			"emptyCase",
+			[]int{},
+			0,
+		},
+		{
+			"expandedCase",
+			[]int{1, 9, 2, 5, 45, 98, 26, 79, 100, 101, 432, 19, 8, 4, 16},
+			15,
+		},
+	}
+
+	for _, tc := range cases {
+		actCount := Count(tc.input)
+		if tc.expected != actCount {
+			t.Errorf("TestCount %v: expected %v, got %v", tc.name, tc.expected, actCount)
+		}
+
+		ch := sliceToChan(tc.input)
+		actCountCh := CountCh(ch)
+		if tc.expected != actCountCh {
+			t.Errorf("TestCount CountCh %v: expected %v, got %v", tc.name, tc.expected, actCountCh)
+		}
+	}
+}
