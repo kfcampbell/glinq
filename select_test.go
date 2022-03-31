@@ -139,3 +139,62 @@ func TestChunk(t *testing.T) {
 		}
 	}
 }
+
+func TestDistinct(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected []int
+	}{
+		{
+			"happyCase",
+			[]int{2, 3, 4, 2, 2, 3, 5},
+			[]int{2, 3, 4, 5},
+		},
+		{
+			"emptyCase",
+			[]int{},
+			[]int{},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := Distinct(tc.input)
+		if !sliceValueEquality(actual, tc.expected) {
+			t.Errorf("TestDistinct %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+	}
+}
+
+func TestDistinctString(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []string
+		expected []string
+	}{
+		{
+			"happyCase",
+			[]string{"happy", "happy", "birthday"},
+			[]string{"happy", "birthday"},
+		},
+		{
+			"emptyCase",
+			[]string{},
+			[]string{},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := Distinct(tc.input)
+		if !sliceValueEquality(actual, tc.expected) {
+			t.Errorf("TestDistinct %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualCh := DistinctCh(ch)
+		actualChSl := chanToSlice(actualCh)
+		if !sliceValueEquality(actualChSl, tc.expected) {
+			t.Errorf("TestDistinct DistinctCh %v: expected %v, got %v", tc.name, tc.expected, actualChSl)
+		}
+	}
+}

@@ -8,7 +8,9 @@ Long-term TODOs:
 - Full coverage of functions in samber/lo
 - Complete testing with code coverage
 - Cancellation (esp. in channel operations)
-
+- Decide whether to implement container type (e.g. Set) like .NET has
+- Use `t.Run(tc.name, ...)` as the testing pattern rather than the janky string constructions currently in place.
+- Consider using literal instantiations instead of `make` everywhere
 
 LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0)?
 - [x] Aggregate

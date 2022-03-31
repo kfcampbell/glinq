@@ -73,3 +73,32 @@ func ChunkCh[TSource any](source <-chan TSource, size int) <-chan []TSource {
 
 	return result
 }
+
+// Distinct returns a slice with all duplicate elements of the given slice removed.
+func Distinct[TSource comparable](source []TSource) []TSource {
+	seen := make(map[TSource]struct{})
+	output := make([]TSource, 0)
+	for _, v := range source {
+		if _, ok := seen[v]; !ok {
+			seen[v] = struct{}{}
+			output = append(output, v)
+		}
+	}
+	return output
+}
+
+func DistinctCh[TSource comparable](source <-chan TSource) <-chan TSource {
+	output := make(chan TSource)
+	seen := make(map[TSource]struct{})
+	go func() {
+		for v := range source {
+			if _, ok := seen[v]; !ok {
+				seen[v] = struct{}{}
+				output <- v
+			}
+		}
+		close(output)
+	}()
+
+	return output
+}
