@@ -27,16 +27,20 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [x] Concat
     - won't implement
 - [x] Contains
-- [ ] Count
+- [x] Count
 - [ ] DefaultIfEmpty
-- [ ] Distinct
-- [ ] DistinctBy
+    - not worth implementing?
+- [x] Distinct
+- [x] DistinctBy
 - [ ] ElementAt
+    - not worth implementing?
 - [ ] ElementAtOrDefault
+    - not worth implementing?
 - [ ] Empty
+    - not worth implementing?
 - [ ] Except
 - [ ] ExceptBy
-- [ ] First
+- [x] First
 - [ ] FirstOrDefault
 - [ ] GroupBy
 - [ ] GroupJoin

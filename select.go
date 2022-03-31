@@ -87,6 +87,8 @@ func Distinct[TSource comparable](source []TSource) []TSource {
 	return output
 }
 
+// DistinctCh returns a channel that will receive all the distinct values
+// from the given channel.
 func DistinctCh[TSource comparable](source <-chan TSource) <-chan TSource {
 	output := make(chan TSource)
 	seen := make(map[TSource]struct{})
@@ -94,6 +96,40 @@ func DistinctCh[TSource comparable](source <-chan TSource) <-chan TSource {
 		for v := range source {
 			if _, ok := seen[v]; !ok {
 				seen[v] = struct{}{}
+				output <- v
+			}
+		}
+		close(output)
+	}()
+
+	return output
+}
+
+// DistinctBy applies the given key function to extract distinct elements from the given slice.
+func DistinctBy[TSource, TResult comparable](source []TSource, key func(elem TSource) TResult) []TSource {
+	seen := make(map[TResult]struct{})
+	output := make([]TSource, 0)
+	for _, v := range source {
+		elem := key(v)
+		if _, ok := seen[elem]; !ok {
+			seen[elem] = struct{}{}
+			output = append(output, v)
+		}
+	}
+	return output
+}
+
+// DistinctByCh applies the given key function to extract distinct elements received from
+// the given channel and passes them down the returned channel.
+func DistinctByCh[TSource, TResult comparable](source <-chan TSource, key func(elem TSource) TResult) <-chan TSource {
+	output := make(chan TSource)
+	seen := make(map[TResult]struct{})
+
+	go func() {
+		for v := range source {
+			elem := key(v)
+			if _, ok := seen[elem]; !ok {
+				seen[elem] = struct{}{}
 				output <- v
 			}
 		}
