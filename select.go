@@ -176,3 +176,47 @@ func ExceptCh[TSource comparable](first <-chan TSource, second <-chan TSource) <
 	}()
 	return result
 }
+
+// ExceptBy produces the set difference of two sequences according to a specified key selector function.
+// TODO(kfcampbell): reduce this heinous time complexity
+func ExceptBy[TSource, TKey comparable](first []TSource, second []TSource, key func(elem TSource) TKey) []TSource {
+	result := make([]TSource, 0)
+
+	temp := DistinctBy(first, key)
+	for _, v := range temp {
+		existsInSecond := Contains(second, func(value TSource) bool {
+			return key(v) == key(value)
+		})
+		if !existsInSecond {
+			result = append(result, v)
+		}
+	}
+
+	return result
+}
+
+// ExceptBy produces the set difference of two sequences according to a specified key selector function.
+func ExceptByCh[TSource, TKey comparable](first <-chan TSource, second <-chan TSource, key func(elem TSource) TKey) <-chan TSource {
+	result := make(chan TSource)
+	seen := make(map[TKey]struct{})
+
+	go func() {
+		for v := range second {
+			elem := key(v)
+			if _, ok := seen[elem]; !ok {
+				seen[elem] = struct{}{}
+			}
+		}
+
+		distinct := DistinctByCh(first, key)
+		for v := range distinct {
+			elem := key(v)
+			if _, ok := seen[elem]; !ok {
+				result <- v
+			}
+		}
+
+		close(result)
+	}()
+	return result
+}

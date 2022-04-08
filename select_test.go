@@ -289,3 +289,74 @@ func TestExceptFloat(t *testing.T) {
 		}
 	}
 }
+
+func TestExceptByInt(t *testing.T) {
+	cases := []struct {
+		name     string
+		first    []int
+		second   []int
+		key      func(int) int
+		expected []int
+	}{
+		{
+			name:   "simpleCase",
+			first:  []int{1, 2, 3},
+			second: []int{2},
+			key: func(i int) int {
+				return i % 2
+			},
+			expected: []int{1},
+		},
+		{
+			name:   "expandedCase",
+			first:  []int{1, 2, 2, 3, 4, 5, 5, 6, 7},
+			second: []int{2, 4, 6},
+			key: func(i int) int {
+				return i % 2
+			},
+			expected: []int{1},
+		},
+		{
+			name:   "emptyFirstCase",
+			first:  []int{},
+			second: []int{2, 4, 6},
+			key: func(i int) int {
+				return i % 2
+			},
+			expected: []int{},
+		},
+		{
+			name:   "emptySecondCase",
+			first:  []int{1, 2, 3, 4, 5, 6},
+			second: []int{},
+			key: func(i int) int {
+				return i % 2
+			},
+			expected: []int{1, 2},
+		},
+		{
+			name:   "anotherCase",
+			first:  []int{2, 2, 3, 4, 4, 4, 7, 8},
+			second: []int{2, 4},
+			key: func(i int) int {
+				return i / 2
+			},
+			expected: []int{7, 8},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := ExceptBy(tc.first, tc.second, tc.key)
+		if !sliceValueEquality(actual, tc.expected) {
+			t.Errorf("TestExceptBy %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		first := sliceToChan(tc.first)
+		second := sliceToChan(tc.second)
+		actualCh := ExceptByCh(first, second, tc.key)
+		actualChSl := chanToSlice(actualCh)
+		if !sliceValueEquality(actualChSl, tc.expected) {
+			t.Errorf("TestExceptBy ExceptByCh %v: expected %v, got %v", tc.name, tc.expected, actualChSl)
+		}
+	}
+}

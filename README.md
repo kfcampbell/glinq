@@ -39,7 +39,7 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [ ] Empty
     - not worth implementing?
 - [x] Except
-- [ ] ExceptBy
+- [x] ExceptBy
 - [x] First
 - [ ] FirstOrDefault
 - [ ] GroupBy
