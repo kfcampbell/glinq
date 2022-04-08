@@ -5,10 +5,12 @@ glinq (prounced "glink") is an attempt to provide a LINQ API using Go generics. 
 Long-term TODOs:
 - Implement parallel operations
 - Use fuzzing in testing
-- Full coverage of functions in samber/lo
+- Full coverage of functions in LINQ
 - Complete testing with code coverage
 - Cancellation (esp. in channel operations)
-
+- Decide whether to implement container types (e.g. Set) like .NET has
+- Use `t.Run(tc.name, ...)` as the testing pattern rather than the janky string constructions currently in place.
+- Consider using literal instantiations instead of `make` everywhere
 
 LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0)?
 - [x] Aggregate
@@ -25,16 +27,20 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [x] Concat
     - won't implement
 - [x] Contains
-- [ ] Count
+- [x] Count
 - [ ] DefaultIfEmpty
-- [ ] Distinct
-- [ ] DistinctBy
+    - not worth implementing?
+- [x] Distinct
+- [x] DistinctBy
 - [ ] ElementAt
+    - not worth implementing?
 - [ ] ElementAtOrDefault
+    - not worth implementing?
 - [ ] Empty
-- [ ] Except
-- [ ] ExceptBy
-- [ ] First
+    - not worth implementing?
+- [x] Except
+- [x] ExceptBy
+- [x] First
 - [ ] FirstOrDefault
 - [ ] GroupBy
 - [ ] GroupJoin
