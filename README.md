@@ -42,9 +42,10 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [x] ExceptBy
 - [x] First
 - [ ] FirstOrDefault
+    - not worth implementing?
 - [ ] GroupBy
 - [ ] GroupJoin
-- [ ] Intersect
+- [x] Intersect
 - [ ] IntersectBy
 - [ ] Join
 - [ ] Last
