@@ -246,3 +246,46 @@ func TestDistinctBy(t *testing.T) {
 	}
 
 }
+
+func TestExceptFloat(t *testing.T) {
+	cases := []struct {
+		name     string
+		first    []float64
+		second   []float64
+		expected []float64
+	}{
+		{
+			name:     "happyCase",
+			first:    []float64{2.0, 2.0, 2.1, 2.2, 2.3, 2.3, 2.4, 2.5},
+			second:   []float64{2.2},
+			expected: []float64{2.0, 2.1, 2.3, 2.4, 2.5},
+		},
+		{
+			name:     "emptyFirstCase",
+			first:    []float64{},
+			second:   []float64{2.2},
+			expected: []float64{},
+		},
+		{
+			name:     "emptySecondCase",
+			first:    []float64{2.0, 2.0, 2.1, 2.2, 2.3, 2.3, 2.4, 2.5},
+			second:   []float64{},
+			expected: []float64{2.0, 2.1, 2.2, 2.3, 2.4, 2.5},
+		},
+	}
+	for _, tc := range cases {
+		actual := Except(tc.first, tc.second)
+		if !sliceValueEquality(actual, tc.expected) {
+			t.Errorf("TestExcept %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		first := sliceToChan(tc.first)
+		second := sliceToChan(tc.second)
+		actualCh := ExceptCh(first, second)
+		actualChSl := chanToSlice(actualCh)
+
+		if !sliceValueEquality(actualChSl, tc.expected) {
+			t.Errorf("TestExcept ExceptCh %v: expected %v, got %v", tc.name, tc.expected, actualChSl)
+		}
+	}
+}

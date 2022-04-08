@@ -138,3 +138,41 @@ func DistinctByCh[TSource, TResult comparable](source <-chan TSource, key func(e
 
 	return output
 }
+
+// Except returns only the _unique_ elements in first that are not
+// present in second
+// TODO(kfcampbell): improve this heinous time complexity
+func Except[TSource comparable](first []TSource, second []TSource) []TSource {
+	result := make([]TSource, 0)
+	distinct := Distinct(first)
+	for _, v := range distinct {
+		notInSecond := !Contains(second, func(value TSource) bool {
+			return value == v
+		})
+		if notInSecond {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+// ExceptCh returns only the unique elements in first that are not present in second
+func ExceptCh[TSource comparable](first <-chan TSource, second <-chan TSource) <-chan TSource {
+	result := make(chan TSource)
+	seen := make(map[TSource]struct{})
+
+	go func() {
+		for v := range second {
+			seen[v] = struct{}{}
+		}
+
+		distinct := DistinctCh(first)
+		for v := range distinct {
+			if _, ok := seen[v]; !ok {
+				result <- v
+			}
+		}
+		close(result)
+	}()
+	return result
+}
