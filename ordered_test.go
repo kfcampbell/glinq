@@ -192,26 +192,41 @@ func TestMaxByInt(t *testing.T) {
 			},
 			expected: 1,
 		},
-		{
-			name:   "emptySource",
-			source: []int{},
-			key: func(elem int) int {
-				return elem * -1
-			},
-			expected: 0,
-		},
 	}
 
 	for _, tc := range cases {
-		actual := MaxBy(tc.source, tc.key)
+		actual, err := MaxBy(tc.source, tc.key)
+		if err != nil {
+			t.Errorf("TestMaxBy %v: expected %v, got %v", tc.name, tc.expected, err)
+		}
 		if actual != tc.expected {
 			t.Errorf("TestMaxBy %v: expected %v, got %v", tc.name, tc.expected, actual)
 		}
 
 		ch := sliceToChan(tc.source)
-		actualCh := MaxByCh(ch, tc.key)
+		actualCh, err := MaxByCh(ch, tc.key)
+		if err != nil {
+			t.Errorf("TestMaxBy MaxByCh %v: expected %v, got %v", tc.name, tc.expected, err)
+		}
 		if actualCh != tc.expected {
 			t.Errorf("TestMaxBy MaxByCh %v: expected %v, got %v", tc.name, tc.expected, actualCh)
 		}
+	}
+}
+
+func TestMaxByError(t *testing.T) {
+	input := make([]int, 0)
+	keyFunc := func(elem int) int {
+		return elem * -1
+	}
+	max, err := MaxBy(input, keyFunc)
+	if err == nil {
+		t.Errorf("TestMaxByError: expected err, got %v", max)
+	}
+
+	inputCh := sliceToChan(input)
+	maxCh, err := MaxByCh(inputCh, keyFunc)
+	if err == nil {
+		t.Errorf("TestMaxByError TestMaxCh: expected err, got %v", maxCh)
 	}
 }

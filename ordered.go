@@ -27,6 +27,10 @@ func Min[TSource constraints.Ordered](source []TSource) (TSource, error) {
 	return min, nil
 }
 
+// func MinBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) TSource {
+
+// }
+
 // MinCh returns the minimum value in a channel of values
 func MinCh[TSource constraints.Ordered](source <-chan TSource) (TSource, error) {
 	init := false
@@ -91,15 +95,14 @@ func MaxCh[TSource constraints.Ordered](source <-chan TSource) (TSource, error) 
 }
 
 // Returns the maximum value in a generic sequence according to a specified key selector function.
-// If the source slice is empty, it returns the default value of TSource.
-// TODO(kfcampbell): is this desirable behavior? should this return an error instead?
-func MaxBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) TSource {
+// If the source slice is empty, it returns an error
+func MaxBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) (TSource, error) {
 	var max TSource
 	if len(source) == 0 {
-		return max
+		return max, fmt.Errorf("cannot take max of empty slice")
 	}
 	if len(source) == 1 {
-		return source[0]
+		return source[0], nil
 	}
 	max = source[0]
 	maxKey := key(source[0])
@@ -111,13 +114,12 @@ func MaxBy[TSource comparable, TKey constraints.Ordered](source []TSource, key f
 		}
 	}
 
-	return max
+	return max, nil
 }
 
 // Returns the maximum value in a generic sequence according to a specified key selector function.
-// If the source channel doesn't receive any values, it returns the default value of TSource.
-// TODO(kfcampbell): is this desirable behavior? should this return an error instead?
-func MaxByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) TSource {
+// If the source channel doesn't receive any values, it returns an error
+func MaxByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) (TSource, error) {
 	var max TSource
 	var maxKey TKey
 	first := false
@@ -134,7 +136,10 @@ func MaxByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource
 			max = v
 		}
 	}
-	return max
+	if !first {
+		return max, fmt.Errorf("cannot take max of chan with no values")
+	}
+	return max, nil
 }
 
 // Average computes the average of a slice of values
