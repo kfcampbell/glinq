@@ -230,3 +230,57 @@ func TestMaxByError(t *testing.T) {
 		t.Errorf("TestMaxByError TestMaxCh: expected err, got %v", maxCh)
 	}
 }
+
+func TestMinByInt(t *testing.T) {
+	cases := []struct {
+		name     string
+		source   []int
+		key      func(elem int) int
+		expected int
+	}{
+		{
+			name:   "happyCase",
+			source: []int{1, 2, 3, 4, 5, 6},
+			key: func(elem int) int {
+				return elem * -1
+			},
+			expected: 6,
+		},
+	}
+
+	for _, tc := range cases {
+		actual, err := MinBy(tc.source, tc.key)
+		if err != nil {
+			t.Errorf("TestMinBy %v: expected %v, got %v", tc.name, tc.expected, err)
+		}
+		if actual != tc.expected {
+			t.Errorf("TestMinBy %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.source)
+		actualCh, err := MinByCh(ch, tc.key)
+		if err != nil {
+			t.Errorf("TestMinBy MinByCh %v: expected %v, got %v", tc.name, tc.expected, err)
+		}
+		if actualCh != tc.expected {
+			t.Errorf("TestMinBy MinByCh %v: expected %v, got %v", tc.name, tc.expected, actualCh)
+		}
+	}
+}
+
+func TestMinByError(t *testing.T) {
+	input := make([]int, 0)
+	keyFunc := func(elem int) int {
+		return elem * -1
+	}
+	min, err := MinBy(input, keyFunc)
+	if err == nil {
+		t.Errorf("TestMinByError: expected err, got %v", min)
+	}
+
+	inputCh := sliceToChan(input)
+	minCh, err := MaxByCh(inputCh, keyFunc)
+	if err == nil {
+		t.Errorf("TestMinByError TestMinCh: expected err, got %v", minCh)
+	}
+}

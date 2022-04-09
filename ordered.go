@@ -27,10 +27,6 @@ func Min[TSource constraints.Ordered](source []TSource) (TSource, error) {
 	return min, nil
 }
 
-// func MinBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) TSource {
-
-// }
-
 // MinCh returns the minimum value in a channel of values
 func MinCh[TSource constraints.Ordered](source <-chan TSource) (TSource, error) {
 	init := false
@@ -49,6 +45,37 @@ func MinCh[TSource constraints.Ordered](source <-chan TSource) (TSource, error) 
 		return min, fmt.Errorf("cannot find minimum value of empty chan")
 	}
 
+	return min, nil
+}
+
+// MinBy returns the minimum value in a generic sequence according to a specified key selector function.
+// If the given slice has no elements, an error is returned.
+func MinBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) (TSource, error) {
+	var min TSource
+	if len(source) == 0 {
+		return min, fmt.Errorf("cannot take minimum of empty slice")
+	}
+	if len(source) == 1 {
+		return source[0], nil
+	}
+
+	minKey := key(source[0])
+	min = source[0]
+	for i := 1; i < len(source); i++ {
+		key := key(source[i])
+		if key < minKey {
+			minKey = key
+			min = source[i]
+		}
+	}
+	return min, nil
+}
+
+// MinByCh returns the minimum value in a generic sequence according to a specified key selector function.
+// If the given channel receives no elements, an error is returned.
+// TODO(kfcampbell): start here with implementation
+func MinByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) (TSource, error) {
+	var min TSource
 	return min, nil
 }
 
