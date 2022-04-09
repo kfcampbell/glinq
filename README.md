@@ -7,6 +7,7 @@ Long-term TODOs:
 - Use fuzzing in testing
 - Full coverage of functions in LINQ
 - Complete testing with code coverage
+- Usage instructions and examples
 - Cancellation (esp. in channel operations)
 - Decide whether to implement container types (e.g. Set) like .NET has
 - Use `t.Run(tc.name, ...)` as the testing pattern rather than the janky string constructions currently in place.
@@ -46,7 +47,7 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [ ] GroupBy
 - [ ] GroupJoin
 - [x] Intersect
-- [ ] IntersectBy
+- [x] IntersectBy
 - [ ] Join
 - [ ] Last
 - [ ] LastOrDefault
