@@ -90,6 +90,53 @@ func MaxCh[TSource constraints.Ordered](source <-chan TSource) (TSource, error) 
 	return max, nil
 }
 
+// Returns the maximum value in a generic sequence according to a specified key selector function.
+// If the source slice is empty, it returns the default value of TSource.
+// TODO(kfcampbell): is this desirable behavior? should this return an error instead?
+func MaxBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) TSource {
+	var max TSource
+	if len(source) == 0 {
+		return max
+	}
+	if len(source) == 1 {
+		return source[0]
+	}
+	max = source[0]
+	maxKey := key(source[0])
+	for i := 1; i < len(source); i++ {
+		key := key(source[i])
+		if maxKey < key {
+			maxKey = key
+			max = source[i]
+		}
+	}
+
+	return max
+}
+
+// Returns the maximum value in a generic sequence according to a specified key selector function.
+// If the source channel doesn't receive any values, it returns the default value of TSource.
+// TODO(kfcampbell): is this desirable behavior? should this return an error instead?
+func MaxByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) TSource {
+	var max TSource
+	var maxKey TKey
+	first := false
+	for v := range source {
+		if !first {
+			first = true
+			max = v
+			maxKey = key(v)
+			continue
+		}
+		key := key(v)
+		if maxKey < key {
+			maxKey = key
+			max = v
+		}
+	}
+	return max
+}
+
 // Average computes the average of a slice of values
 func Average[TSource constraints.Integer | constraints.Float](source []TSource) (TSource, error) {
 	i := TSource(len(source))

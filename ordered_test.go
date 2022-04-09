@@ -176,3 +176,42 @@ func TestAverageFloat(t *testing.T) {
 		}
 	}
 }
+
+func TestMaxByInt(t *testing.T) {
+	cases := []struct {
+		name     string
+		source   []int
+		key      func(elem int) int
+		expected int
+	}{
+		{
+			name:   "happyCase",
+			source: []int{6, 5, 4, 3, 2, 1},
+			key: func(elem int) int {
+				return elem * -1
+			},
+			expected: 1,
+		},
+		{
+			name:   "emptySource",
+			source: []int{},
+			key: func(elem int) int {
+				return elem * -1
+			},
+			expected: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		actual := MaxBy(tc.source, tc.key)
+		if actual != tc.expected {
+			t.Errorf("TestMaxBy %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.source)
+		actualCh := MaxByCh(ch, tc.key)
+		if actualCh != tc.expected {
+			t.Errorf("TestMaxBy MaxByCh %v: expected %v, got %v", tc.name, tc.expected, actualCh)
+		}
+	}
+}

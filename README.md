@@ -45,15 +45,17 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [ ] FirstOrDefault
     - not worth implementing?
 - [ ] GroupBy
+    - is this possible without anonymous types?
 - [ ] GroupJoin
 - [x] Intersect
 - [x] IntersectBy
 - [ ] Join
+    - is this possible without anonymous types?
 - [ ] Last
 - [ ] LastOrDefault
 - [ ] LongCount
 - [x] Max
-- [ ] MaxBy
+- [x] MaxBy
 - [x] Min
 - [ ] MinBy
 - [ ] OfType
