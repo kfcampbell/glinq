@@ -51,8 +51,9 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [x] IntersectBy
 - [ ] Join
     - is this possible without anonymous types?
-- [ ] Last
+- [x] Last
 - [ ] LastOrDefault
+    - not worth implementing?
 - [ ] LongCount
 - [x] Max
 - [x] MaxBy

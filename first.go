@@ -116,3 +116,29 @@ func CountCh[TSource any](source <-chan TSource) int {
 	}
 	return i
 }
+
+// Last returns the last element of a slice or an error if the slice is empty.
+func Last[TSource any](source []TSource) (TSource, error) {
+	var last TSource
+	if len(source) == 0 {
+		return last, fmt.Errorf("cannot get the last element of an empty slice")
+	}
+	return source[len(source)-1], nil
+}
+
+// LastCh returns the last element passed through a channel or an error
+// if no value was passed through the channel.
+func LastCh[TSource any](source <-chan TSource) (TSource, error) {
+	empty := true
+	var last TSource
+	for v := range source {
+		if empty {
+			empty = false
+		}
+		last = v
+	}
+	if empty {
+		return last, fmt.Errorf("cannot get last element of a channel with no values")
+	}
+	return last, nil
+}
