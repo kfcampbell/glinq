@@ -76,6 +76,23 @@ func MinBy[TSource comparable, TKey constraints.Ordered](source []TSource, key f
 // TODO(kfcampbell): start here with implementation
 func MinByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) (TSource, error) {
 	var min TSource
+	var minKey TKey
+	first := false
+	for v := range source {
+		if !first {
+			first = true
+			min = v
+			minKey = key(v)
+		}
+		key := key(v)
+		if minKey > key {
+			min = v
+			minKey = key
+		}
+	}
+	if !first {
+		return min, fmt.Errorf("cannot take minimum of a chan with no values")
+	}
 	return min, nil
 }
 

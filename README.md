@@ -57,7 +57,7 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [x] Max
 - [x] MaxBy
 - [x] Min
-- [ ] MinBy
+- [x] MinBy
 - [ ] OfType
 - [ ] OrderBy
 - [ ] OrderByDescending
