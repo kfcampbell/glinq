@@ -73,7 +73,6 @@ func MinBy[TSource comparable, TKey constraints.Ordered](source []TSource, key f
 
 // MinByCh returns the minimum value in a generic sequence according to a specified key selector function.
 // If the given channel receives no elements, an error is returned.
-// TODO(kfcampbell): start here with implementation
 func MinByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) (TSource, error) {
 	var min TSource
 	var minKey TKey
@@ -217,4 +216,15 @@ func AverageCh[TSource constraints.Integer | constraints.Float](source <-chan TS
 	}
 
 	return sum / i, nil
+}
+
+// TODO(kfcampbell): restart implementation here
+func OrderBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) []TSource {
+	result := make([]TSource, 0)
+	return result
+}
+
+func OrderByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) <-chan TSource {
+	result := make(<-chan TSource)
+	return result
 }

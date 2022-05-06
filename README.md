@@ -61,6 +61,7 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [x] Min
 - [x] MinBy
 - [ ] OfType
+    - is this possible with Go slices/channels?
 - [ ] OrderBy
 - [ ] OrderByDescending
 - [ ] Prepend

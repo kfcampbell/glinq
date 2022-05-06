@@ -239,12 +239,12 @@ func TestMinByInt(t *testing.T) {
 		expected int
 	}{
 		{
-			name:   "happyCase",
-			source: []int{1, 2, 3, 4, 5, 6},
-			key: func(elem int) int {
+			"happyCase",
+			[]int{1, 2, 3, 4, 5, 6},
+			func(elem int) int {
 				return elem * -1
 			},
-			expected: 6,
+			6,
 		},
 	}
 
@@ -282,5 +282,30 @@ func TestMinByError(t *testing.T) {
 	minCh, err := MaxByCh(inputCh, keyFunc)
 	if err == nil {
 		t.Errorf("TestMinByError TestMinCh: expected err, got %v", minCh)
+	}
+}
+
+// TODO(kfcampbell): fix this test before doing implementation
+func TestOrderBy(t *testing.T) {
+	cases := []struct{
+		{
+			name string
+			input []int
+			key func(elem int) int
+			expected []int
+		}{
+			{
+				"happyCase",
+				[]int{1, 2, 3},
+				func(elem int) {
+					return elem * -1
+				},
+				[]int{-1, -2, -3}
+			},
+		}
+	}
+
+	for _, tc := range cases {
+
 	}
 }
