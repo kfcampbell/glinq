@@ -12,6 +12,7 @@ Long-term TODOs:
 - Decide whether to implement container types (e.g. Set) like .NET has
 - Use `t.Run(tc.name, ...)` as the testing pattern rather than the janky string constructions currently in place.
 - Consider using literal instantiations instead of `make` everywhere
+- Organize file structure better
 
 LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0)?
 - [x] Aggregate
@@ -54,7 +55,7 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [x] Last
 - [ ] LastOrDefault
     - not worth implementing?
-- [ ] LongCount
+- [x] LongCount
 - [x] Max
 - [x] MaxBy
 - [x] Min

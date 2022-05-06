@@ -441,3 +441,34 @@ func TestLastErr(t *testing.T) {
 		}
 	}
 }
+
+func TestLongCount(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected int64
+	}{
+		{
+			"happyCase",
+			[]int{3, 44, 19, 27, 29, 12},
+			int64(6),
+		},
+		{
+			"emptyCase",
+			[]int{},
+			int64(0),
+		},
+	}
+	for _, tc := range cases {
+		actual := LongCount(tc.input)
+		if tc.expected != actual {
+			t.Errorf("TestLongCount %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualCh := LongCountCh(ch)
+		if tc.expected != actualCh {
+			t.Errorf("TestLongCount LongCountCh %v: expected %v, got %v", tc.name, tc.expected, actualCh)
+		}
+	}
+}

@@ -142,3 +142,18 @@ func LastCh[TSource any](source <-chan TSource) (TSource, error) {
 	}
 	return last, nil
 }
+
+// LongCount returns an int64 that represents the number of elements in the slice.
+func LongCount[TSource any](source []TSource) int64 {
+	return int64(len(source))
+}
+
+// LongCountCh returns an int64 that represents the number of elements
+// passed through the source channel.
+func LongCountCh[TSource any](source <-chan TSource) int64 {
+	i := int64(0)
+	for _ = range source {
+		i++
+	}
+	return i
+}
