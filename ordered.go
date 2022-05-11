@@ -228,3 +228,23 @@ func OrderByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSour
 	result := make(<-chan TSource)
 	return result
 }
+
+func Prepend[TSource any](source []TSource, elem TSource) []TSource {
+	result := []TSource{elem}
+	for _, v := range source {
+		result = append(result, v)
+	}
+	return result
+}
+
+func PrependCh[TSource any](source <-chan TSource, elem TSource) <-chan TSource {
+	result := make(chan TSource)
+	go func() {
+		result <- elem
+		for v := range source {
+			result <- v
+		}
+		close(result)
+	}()
+	return result
+}
