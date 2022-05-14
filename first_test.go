@@ -378,3 +378,41 @@ func TestCount(t *testing.T) {
 		}
 	}
 }
+
+func TestLastInt(t *testing.T){
+	cases := []struct {
+		name     string
+		input    []int
+		pred     func(value int) bool
+		expected int
+	}{
+		{
+			"happyCase",
+			[]int{1, 2, 3},
+			func(value int) bool {
+				return value == 2
+			},
+			2,
+		},
+		{
+			"expandedCase",
+			[]int{1, 4, 3, 23, 412, 19, 49, 67, 76, 15, 23, 18},
+			func(value int) bool {
+				return value == 412
+			},
+			412,
+		},
+	}
+	for _, tc := range cases {
+		actFirst, err := Last(tc.input, tc.pred)
+		if err != nil || actFirst != tc.expected {
+			t.Errorf("TestFirstInt %v: expected %v, got %v, err %v", tc.name, tc.expected, actFirst, err)
+		}
+
+		ch := sliceToChan(tc.input)
+		actFirstCh, err := LastCh(ch, tc.pred)
+		if err != nil || actFirstCh != tc.expected {
+			t.Errorf("TestFirstInt FirstCh %v: expected %v, got %v, err %v", tc.name, tc.expected, actFirstCh, err)
+		}
+	}
+}

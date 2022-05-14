@@ -85,6 +85,38 @@ func FirstCh[TSource any](source <-chan TSource, predicate func(value TSource) b
 	return empty, fmt.Errorf("cannot find item in chan")
 }
 
+// Last returns the last element in a slice that satisfies a specified condition,
+// or an error if no element matches the specific condition.
+func Last[TSource any](source []TSource, predicate func(value TSource) bool) (TSource, error) {
+	for i := len(source) - 1; i >= 0; i-- {
+		if predicate(source[i]) {
+			return source[i], nil
+		}
+	}
+
+	var empty TSource
+	return empty, fmt.Errorf("could not find item in input")
+}
+
+// LastCh returns the last element received from a channel that satisfies a specified
+// condition, or an error if no element matches the specific condition.
+func LastCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) (TSource, error) {
+
+	var empty TSource
+	var doesExist = false
+	for v := range source {
+		if predicate(v) {
+			empty = v
+			doesExist = true
+		}
+	}
+	if doesExist {
+		return empty, nil
+	}
+	return empty, fmt.Errorf("cannot find item in chan")
+
+}
+
 // TODO: These do not exactly match Contains in LINQ, which instead would have this signature:
 //   func Contains[TSource any](source []TSource, value TSource) bool
 
