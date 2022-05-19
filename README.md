@@ -3,6 +3,7 @@
 glinq (prounced "glink") is an attempt to provide a LINQ API using Go generics. The name uncreatively comes from combining Go and LINQ. Inspired by github.com/samber/lo
 
 Long-term TODOs:
+
 - Implement parallel operations
 - Use fuzzing in testing
 - Full coverage of functions in LINQ
@@ -14,44 +15,45 @@ Long-term TODOs:
 - Consider using literal instantiations instead of `make` everywhere
 
 LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0)?
+
 - [x] Aggregate
 - [x] All
 - [x] Any
 - [x] Append
-    - won't implement
+  - won't implement
 - [x] AsEnumerable
-    - won't implement
+  - won't implement
 - [x] Average
 - [x] Cast
-    - won't implement
+  - won't implement
 - [x] Chunk
 - [x] Concat
-    - won't implement
+  - won't implement
 - [x] Contains
 - [x] Count
 - [ ] DefaultIfEmpty
-    - not worth implementing?
+  - not worth implementing?
 - [x] Distinct
 - [x] DistinctBy
 - [ ] ElementAt
-    - not worth implementing?
+  - not worth implementing?
 - [ ] ElementAtOrDefault
-    - not worth implementing?
+  - not worth implementing?
 - [ ] Empty
-    - not worth implementing?
+  - not worth implementing?
 - [x] Except
 - [x] ExceptBy
 - [x] First
 - [ ] FirstOrDefault
-    - not worth implementing?
+  - not worth implementing?
 - [ ] GroupBy
-    - is this possible without anonymous types?
+  - is this possible without anonymous types?
 - [ ] GroupJoin
 - [x] Intersect
 - [x] IntersectBy
 - [ ] Join
-    - is this possible without anonymous types?
-- [ ] Last
+  - is this possible without anonymous types?
+- [x] Last
 - [ ] LastOrDefault
 - [ ] LongCount
 - [x] Max
