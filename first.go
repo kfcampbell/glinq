@@ -93,7 +93,6 @@ func Last[TSource any](source []TSource, predicate func(value TSource) bool) (TS
 			return source[i], nil
 		}
 	}
-
 	var empty TSource
 	return empty, fmt.Errorf("could not find item in input")
 }
@@ -101,7 +100,6 @@ func Last[TSource any](source []TSource, predicate func(value TSource) bool) (TS
 // LastCh returns the last element received from a channel that satisfies a specified
 // condition, or an error if no element matches the specific condition.
 func LastCh[TSource any](source <-chan TSource, predicate func(value TSource) bool) (TSource, error) {
-
 	var empty TSource
 	var doesExist = false
 	for v := range source {
@@ -114,7 +112,6 @@ func LastCh[TSource any](source <-chan TSource, predicate func(value TSource) bo
 		return empty, nil
 	}
 	return empty, fmt.Errorf("cannot find item in chan")
-
 }
 
 // TODO: These do not exactly match Contains in LINQ, which instead would have this signature:
