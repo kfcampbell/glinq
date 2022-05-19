@@ -64,8 +64,8 @@ LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumer
 - [ ] OrderBy
 - [ ] OrderByDescending
 - [x] Prepend
-- [ ] Range
-- [ ] Repeat
+- [x] Range
+- [x] Repeat
 - [ ] Reverse
 - [x] Select
 - [ ] SelectMany
