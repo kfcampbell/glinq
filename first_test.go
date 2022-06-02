@@ -378,3 +378,97 @@ func TestCount(t *testing.T) {
 		}
 	}
 }
+
+func TestLast(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected int
+	}{
+		{
+			"happyCase",
+			[]int{1, 2, 3, 4},
+			4,
+		},
+		{
+			"expandedCase",
+			[]int{9, 2, 3, 19, 18, 42, 29, 27, 17, 15},
+			15,
+		},
+	}
+
+	for _, tc := range cases {
+		actual, err := Last(tc.input)
+		if err != nil {
+			t.Errorf("TestLast %v: expected %v, got error %v", tc.name, tc.expected, err)
+		}
+		if actual != tc.expected {
+			t.Errorf("TestLast %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualCh, err := LastCh(ch)
+		if err != nil {
+			t.Errorf("TestLast LastCh %v: expected %v, got error %v", tc.name, tc.expected, err)
+		}
+		if actualCh != tc.expected {
+			t.Errorf("TestLast LastCh %v: expected %v, got %v", tc.name, tc.expected, actualCh)
+		}
+	}
+}
+
+func TestLastErr(t *testing.T) {
+	cases := []struct {
+		name  string
+		input []int
+	}{
+		{
+			"simpleErrorCase",
+			[]int{},
+		},
+	}
+
+	for _, tc := range cases {
+		actual, err := Last(tc.input)
+		if err == nil {
+			t.Errorf("TestLastErr %v: expected error, got %v", tc.name, actual)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualCh, err := LastCh(ch)
+		if err == nil {
+			t.Errorf("TestLastErr LastCh %v: expected error, got %v", tc.name, actualCh)
+		}
+	}
+}
+
+func TestLongCount(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected int64
+	}{
+		{
+			"happyCase",
+			[]int{3, 44, 19, 27, 29, 12},
+			int64(6),
+		},
+		{
+			"emptyCase",
+			[]int{},
+			int64(0),
+		},
+	}
+	for _, tc := range cases {
+		actual := LongCount(tc.input)
+		if tc.expected != actual {
+			t.Errorf("TestLongCount %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.input)
+		actualCh := LongCountCh(ch)
+		if tc.expected != actualCh {
+			t.Errorf("TestLongCount LongCountCh %v: expected %v, got %v", tc.name, tc.expected, actualCh)
+		}
+	}
+}
