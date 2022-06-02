@@ -243,7 +243,25 @@ func OrderBy[TSource comparable, TKey constraints.Ordered](source []TSource, key
 
 func OrderByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) <-chan TSource {
 	result := make(chan TSource)
-	close(result)
+
+	go func() {
+		pairs := make(map[TKey]TSource)
+		keys := make([]TKey, 0)
+
+		for v := range source {
+			out := key(v)
+			pairs[out] = v
+			keys = append(keys, out)
+		}
+
+		keys = quickSort(keys)
+
+		for _, v := range keys {
+			result <- pairs[v]
+		}
+		close(result)
+	}()
+
 	return result
 }
 
