@@ -218,6 +218,7 @@ func AverageCh[TSource constraints.Integer | constraints.Float](source <-chan TS
 	return sum / i, nil
 }
 
+// OrderBy sorts the elements of a sequence in ascending order according to a key function.
 func OrderBy[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) []TSource {
 	result := make([]TSource, 0)
 	pairs := make(map[TKey]TSource)
@@ -241,6 +242,7 @@ func OrderBy[TSource comparable, TKey constraints.Ordered](source []TSource, key
 	return result
 }
 
+// OrderByCh sorts the elements of a channel in ascending order according to a key function.
 func OrderByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) <-chan TSource {
 	result := make(chan TSource)
 
@@ -265,6 +267,7 @@ func OrderByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSour
 	return result
 }
 
+// OrderByDescending sorts the elements of a channel in descending order according to a key function.
 func OrderByDescending[TSource comparable, TKey constraints.Ordered](source []TSource, key func(elem TSource) TKey) []TSource {
 	result := make([]TSource, 0)
 	pairs := make(map[TKey]TSource)
@@ -288,6 +291,7 @@ func OrderByDescending[TSource comparable, TKey constraints.Ordered](source []TS
 	return result
 }
 
+// OrderByDescendingCh sorts the elements of a channel in descending order according to a key function.
 func OrderByDescendingCh[TSource comparable, TKey constraints.Ordered](source <-chan TSource, key func(elem TSource) TKey) <-chan TSource {
 	result := make(chan TSource)
 
