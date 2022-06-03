@@ -325,6 +325,46 @@ func TestOrderBy(t *testing.T) {
 	}
 }
 
+func TestOrderByDescending(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		key      func(elem int) int
+		expected []int
+	}{
+		{
+			"identityCase",
+			[]int{1, 2, 3},
+			func(elem int) int {
+				return elem * 1
+			},
+			[]int{3, 2, 1},
+		},
+		{
+			"otherCase",
+			[]int{1, 2, 3},
+			func(elem int) int {
+				return elem*2 - elem*elem
+			},
+			[]int{1, 2, 3},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := OrderByDescending(tc.input, tc.key)
+		if !sliceValueEquality(tc.expected, actual) {
+			t.Errorf("TestOrderByDescending: %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.expected)
+		actualCh := OrderByDescendingCh(ch, tc.key)
+		actualSl := chanToSlice(actualCh)
+		if !sliceValueEquality(tc.expected, actualSl) {
+			t.Errorf("TestOrderByDescending OrderByDescendingCh: %v: expected %v, got %v", tc.name, tc.expected, actualSl)
+		}
+	}
+}
+
 func TestQuicksort(t *testing.T) {
 	cases := []struct {
 		name     string
@@ -345,6 +385,32 @@ func TestQuicksort(t *testing.T) {
 
 	for _, tc := range cases {
 		actual := quickSort(tc.input)
+		if !sliceValueEquality(tc.expected, actual) {
+			t.Errorf("TestQuicksort %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+	}
+}
+
+func TestQuicksortDescending(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected []int
+	}{
+		{
+			"happyCase",
+			[]int{1, 2, 3, 4, 5},
+			[]int{5, 4, 3, 2, 1},
+		},
+		{
+			"longerCase",
+			[]int{23, 32, 19, 18, 13, 29, 25, -1, 4, 0, -13},
+			[]int{32, 29, 25, 23, 19, 18, 13, 4, 0, -1, -13},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := quickSortDescending(tc.input)
 		if !sliceValueEquality(tc.expected, actual) {
 			t.Errorf("TestQuicksort %v: expected %v, got %v", tc.name, tc.expected, actual)
 		}
