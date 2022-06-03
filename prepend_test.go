@@ -2,37 +2,46 @@ package main
 
 import "testing"
 
-func TestPrependInt(t *testing.T) {
+func TestPrepend(t *testing.T) {
 	cases := []struct {
 		name     string
-		input    []int
-		value    int
+		source   []int
+		elem     int
 		expected []int
 	}{
 		{
 			"happyCase",
 			[]int{1, 2, 3},
-			4,
-			[]int{4, 1, 2, 3},
+			0,
+			[]int{0, 1, 2, 3},
 		},
 		{
-			"empty",
+			"emptyCase",
 			[]int{},
-			4,
-			[]int{4},
+			0,
+			[]int{0},
+		},
+		{
+			"longCase",
+			[]int{42, 11, 29, 19, 17, 18, 25, 43, 99},
+			11,
+			[]int{11, 42, 11, 29, 19, 17, 18, 25, 43, 99},
 		},
 	}
 
 	for _, tc := range cases {
-		result := Prepend(tc.input, tc.value)
-		if !sliceValueEquality(result, tc.expected) {
-			t.Errorf("TestPrependInt %v: expected %v, got %v", tc.name, tc.expected, tc.input)
+		actual := Prepend(tc.source, tc.elem)
+		success := sliceValueEquality(actual, tc.expected)
+		if !success {
+			t.Errorf("TestPrepend %v: expected %v, got %v", tc.name, tc.expected, actual)
 		}
 
-		resultCh := PrependCh(sliceToChan(tc.input), tc.value)
-		result = chanToSlice(resultCh)
-		if !sliceValueEquality(result, tc.expected) {
-			t.Errorf("TestPrependIntCh %v: expected %v, got %v", tc.name, tc.expected, tc.input)
+		ch := sliceToChan(tc.source)
+		actualCh := PrependCh(ch, tc.elem)
+		actualChSl := chanToSlice(actualCh)
+		successCh := sliceValueEquality(actualChSl, tc.expected)
+		if !successCh {
+			t.Errorf("TestPrepend PrependCh %v: expected %v, got %v", tc.name, tc.expected, actualChSl)
 		}
 	}
 }
