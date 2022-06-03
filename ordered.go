@@ -265,26 +265,6 @@ func OrderByCh[TSource comparable, TKey constraints.Ordered](source <-chan TSour
 	return result
 }
 
-func Prepend[TSource any](source []TSource, elem TSource) []TSource {
-	result := []TSource{elem}
-	for _, v := range source {
-		result = append(result, v)
-	}
-	return result
-}
-
-func PrependCh[TSource any](source <-chan TSource, elem TSource) <-chan TSource {
-	result := make(chan TSource)
-	go func() {
-		result <- elem
-		for v := range source {
-			result <- v
-		}
-		close(result)
-	}()
-	return result
-}
-
 func quickSort[TSource constraints.Ordered](input []TSource) []TSource {
 	for i := 1; i < len(input); i++ {
 		j := i
