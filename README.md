@@ -15,7 +15,7 @@ Long-term TODOs:
 - Consider using literal instantiations instead of `make` everywhere
 - Organize file structure better
 
-LINQ [API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0)?
+[LINQ API scheme](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable?view=net-6.0):
 
 - [x] Aggregate
 - [x] All
