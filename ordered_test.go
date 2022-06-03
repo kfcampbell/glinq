@@ -185,12 +185,12 @@ func TestMaxByInt(t *testing.T) {
 		expected int
 	}{
 		{
-			name:   "happyCase",
-			source: []int{6, 5, 4, 3, 2, 1},
-			key: func(elem int) int {
+			"happyCase",
+			[]int{6, 5, 4, 3, 2, 1},
+			func(elem int) int {
 				return elem * -1
 			},
-			expected: 1,
+			1,
 		},
 	}
 
@@ -239,12 +239,12 @@ func TestMinByInt(t *testing.T) {
 		expected int
 	}{
 		{
-			name:   "happyCase",
-			source: []int{1, 2, 3, 4, 5, 6},
-			key: func(elem int) int {
+			"happyCase",
+			[]int{1, 2, 3, 4, 5, 6},
+			func(elem int) int {
 				return elem * -1
 			},
-			expected: 6,
+			6,
 		},
 	}
 
@@ -282,5 +282,115 @@ func TestMinByError(t *testing.T) {
 	minCh, err := MaxByCh(inputCh, keyFunc)
 	if err == nil {
 		t.Errorf("TestMinByError TestMinCh: expected err, got %v", minCh)
+	}
+}
+
+func TestOrderBy(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		key      func(elem int) int
+		expected []int
+	}{
+		{
+			"identityCase",
+			[]int{1, 2, 3},
+			func(elem int) int {
+				return elem * 1
+			},
+			[]int{1, 2, 3},
+		},
+		{
+			"otherCase",
+			[]int{1, 2, 3},
+			func(elem int) int {
+				return elem*2 - elem*elem
+			},
+			[]int{3, 2, 1},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := OrderBy(tc.input, tc.key)
+		if !sliceValueEquality(tc.expected, actual) {
+			t.Errorf("TestOrderBy: %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.expected)
+		actualCh := OrderByCh(ch, tc.key)
+		actualSl := chanToSlice(actualCh)
+		if !sliceValueEquality(tc.expected, actualSl) {
+			t.Errorf("TestOrderBy OrderByCh: %v: expected %v, got %v", tc.name, tc.expected, actualSl)
+		}
+	}
+}
+
+func TestPrepend(t *testing.T) {
+	cases := []struct {
+		name     string
+		source   []int
+		elem     int
+		expected []int
+	}{
+		{
+			"happyCase",
+			[]int{1, 2, 3},
+			0,
+			[]int{0, 1, 2, 3},
+		},
+		{
+			"emptyCase",
+			[]int{},
+			0,
+			[]int{0},
+		},
+		{
+			"longCase",
+			[]int{42, 11, 29, 19, 17, 18, 25, 43, 99},
+			11,
+			[]int{11, 42, 11, 29, 19, 17, 18, 25, 43, 99},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := Prepend(tc.source, tc.elem)
+		success := sliceValueEquality(actual, tc.expected)
+		if !success {
+			t.Errorf("TestPrepend %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
+
+		ch := sliceToChan(tc.source)
+		actualCh := PrependCh(ch, tc.elem)
+		actualChSl := chanToSlice(actualCh)
+		successCh := sliceValueEquality(actualChSl, tc.expected)
+		if !successCh {
+			t.Errorf("TestPrepend PrependCh %v: expected %v, got %v", tc.name, tc.expected, actualChSl)
+		}
+	}
+}
+
+func TestQuicksort(t *testing.T) {
+	cases := []struct {
+		name     string
+		input    []int
+		expected []int
+	}{
+		{
+			"happyCase",
+			[]int{5, 3, 2, 4, 1},
+			[]int{1, 2, 3, 4, 5},
+		},
+		{
+			"longerCase",
+			[]int{23, 32, 19, 18, 13, 29, 25, -1, 4, 0, -13},
+			[]int{-13, -1, 0, 4, 13, 18, 19, 23, 25, 29, 32},
+		},
+	}
+
+	for _, tc := range cases {
+		actual := quickSort(tc.input)
+		if !sliceValueEquality(tc.expected, actual) {
+			t.Errorf("TestQuicksort %v: expected %v, got %v", tc.name, tc.expected, actual)
+		}
 	}
 }
