@@ -61,7 +61,7 @@ func TestSkip(t *testing.T) {
 	}
 }
 
-func TestSkipLast(t *testing.T){
+func TestSkipLast(t *testing.T) {
 	cases := []struct {
 		name     string
 		source   []int
@@ -76,10 +76,28 @@ func TestSkipLast(t *testing.T){
 		if !sliceValueEquality(result, tc.expected) {
 			t.Errorf("TestSkipLast %v: expected %v, got %v", tc.name, tc.expected, result)
 		}
-		resultCh := SkipLastCh(sliceToChan(tc.source), tc.count)
+	}
+}
+
+func TestSkipWhile(t *testing.T) {
+	cases := []struct {
+		name      string
+		source    []int
+		predicate func(value int) bool
+		expected  []int
+	}{
+		{"happyCase", []int{0, 1, 2, 3, 4}, func(value int) bool { return value < 3 }, []int{3, 4}},
+		{"empty", []int{}, func(value int) bool { return value < 3 }, []int{}},
+	}
+	for _, tc := range cases {
+		result := SkipWhile(tc.source, tc.predicate)
+		if !sliceValueEquality(result, tc.expected) {
+			t.Errorf("TestSkipWhile %v: expected %v, got %v", tc.name, tc.expected, result)
+		}
+		resultCh := SkipWhileCh(sliceToChan(tc.source), tc.predicate)
 		resultChSlice := chanToSlice(resultCh)
 		if !sliceValueEquality(resultChSlice, tc.expected) {
-			t.Errorf("TestSkipLastCh %v: expected %v, got %v", tc.name, tc.expected, resultCh)
+			t.Errorf("TestSkipWhileCh %v: expected %v, got %v", tc.name, tc.expected, resultCh)
 		}
 	}
 }
