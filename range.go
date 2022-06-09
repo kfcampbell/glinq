@@ -46,12 +46,6 @@ func SkipLast[Tsource any](source []Tsource, count int) []Tsource {
 	return result
 }
 
-func SkipLastCh[Tsource any](source <-chan Tsource, count int) <-chan Tsource {
-	result := make(chan Tsource)
-	// Does this even makes sense? We can never know how many elements are in the channel.
-	return result
-}
-
 func SkipWhile[Tsource any](source []Tsource, predicate func(value Tsource) bool) []Tsource {
 	result := make([]Tsource, 0)
 	for _, v := range source {
