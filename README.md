@@ -53,17 +53,17 @@ Long-term TODOs:
 - [x] Intersect
 - [x] IntersectBy
 - [ ] Join
-    - is this possible without anonymous types?
+  - is this possible without anonymous types?
 - [x] Last
 - [ ] LastOrDefault
-    - not worth implementing?
+  - not worth implementing?
 - [x] LongCount
 - [x] Max
 - [x] MaxBy
 - [x] Min
 - [x] MinBy
 - [ ] OfType
-    - is this possible with Go slices/channels?
+  - is this possible with Go slices/channels?
 - [x] OrderBy
 - [x] OrderByDescending
 - [x] Prepend
@@ -75,9 +75,9 @@ Long-term TODOs:
 - [ ] SequenceEqual
 - [ ] Single
 - [ ] SingleOrDefault
-- [ ] Skip
-- [ ] SkipLast
-- [ ] SkipWhile
+- [x] Skip
+- [x] SkipLast
+- [x] SkipWhile
 - [ ] Sum
 - [ ] Take
 - [ ] TakeLast
